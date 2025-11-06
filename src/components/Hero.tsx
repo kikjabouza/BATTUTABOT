@@ -39,6 +39,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="hero-button group"
+              onClick={() => window.location.href = '/inscription'}
             >
               Commencer l'aventure
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -47,6 +48,7 @@ const Hero = () => {
               size="lg" 
               variant="outline"
               className="hero-button-outline"
+              onClick={() => window.location.href = '/about'}
             >
               Découvrir le concept
             </Button>

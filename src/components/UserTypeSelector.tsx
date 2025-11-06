@@ -77,6 +77,7 @@ const UserTypeSelector = () => {
                   <Button 
                     className="w-full group/btn"
                     variant="outline"
+                    onClick={() => window.location.href = '/inscription'}
                   >
                     Choisir
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />

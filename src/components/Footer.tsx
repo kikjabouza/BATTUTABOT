@@ -24,10 +24,11 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-bold text-foreground text-lg">Navigation</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="footer-link">Accueil</a></li>
-              <li><a href="#" className="footer-link">Culture</a></li>
-              <li><a href="#" className="footer-link">Services</a></li>
-              <li><a href="#" className="footer-link">À propos</a></li>
+              <li><a href="/" className="footer-link">Accueil</a></li>
+              <li><a href="/culture" className="footer-link">Culture</a></li>
+              <li><a href="/communaute" className="footer-link">Communauté</a></li>
+              <li><a href="/about" className="footer-link">À propos</a></li>
+              <li><a href="/contact" className="footer-link">Contact</a></li>
             </ul>
           </div>
 
