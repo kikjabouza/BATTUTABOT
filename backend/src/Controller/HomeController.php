@@ -16,7 +16,8 @@ class HomeController extends AbstractController
     }
 
     // Route "catch-all" EN DERNIER avec exclusion améliorée
-    #[Route('/{reactRouting}', name: 'app_home', requirements: ['reactRouting' => '^(?!api|_wdt|_profiler|exemple).+'], defaults: ['reactRouting' => null])]
+    #[Route('/{reactRouting}', name: 'app_home', requirements: ['reactRouting' => '^(?!api/|_wdt|_profiler|exemple).+']
+, defaults: ['reactRouting' => null])]
     public function index(): Response
     {
         return $this->render('react/index.html.twig');
