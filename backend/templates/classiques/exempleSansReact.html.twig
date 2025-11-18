@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}BattutaBot - Exemple
+			{% endblock %}
+		</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				min-height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 20px;
+			}
+
+			.example-wrapper {
+				background: white;
+				border-radius: 20px;
+				padding: 40px;
+				box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+				max-width: 800px;
+				width: 100%;
+				text-align: center;
+				border: 1px solid rgba(255, 255, 255, 0.2);
+			}
+
+			.success-icon {
+				font-size: 4rem;
+				margin-bottom: 20px;
+				animation: bounce 2s infinite;
+			}
+
+			@keyframes bounce {
+				0,
+				20%,
+				50%,
+				80%,
+				100% {
+					transform: translateY(0);
+				}
+				40% {
+					transform: translateY(-10px);
+				}
+				60% {
+					transform: translateY(-5px);
+				}
+			}
+
+			h1 {
+				color: #2d3748;
+				font-size: 2.5rem;
+				margin-bottom: 10px;
+				font-weight: 700;
+			}
+
+			.subtitle {
+				color: #718096;
+				font-size: 1.2rem;
+				margin-bottom: 30px;
+			}
+
+			.info-section {
+				background: #f7fafc;
+				border-radius: 15px;
+				padding: 25px;
+				margin: 25px 0;
+				border-left: 4px solid #667eea;
+			}
+
+			.info-section h2 {
+				color: #2d3748;
+				margin-bottom: 15px;
+				font-size: 1.3rem;
+			}
+
+			.file-list {
+				list-style: none;
+				text-align: left;
+			}
+
+			.file-list li {
+				padding: 12px;
+				margin: 8px 0;
+				background: white;
+				border-radius: 8px;
+				border: 1px solid #e2e8f0;
+				transition: all 0.3s ease;
+			}
+
+			.file-list li:hover {
+				transform: translateX(5px);
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+			}
+
+			.file-list code {
+				background: #edf2f7;
+				padding: 4px 8px;
+				border-radius: 4px;
+				font-family: 'Courier New', monospace;
+				color: #2d3748;
+				font-weight: 500;
+			}
+
+			.status-badge {
+				display: inline-block;
+				background: #48bb78;
+				color: white;
+				padding: 8px 16px;
+				border-radius: 20px;
+				font-size: 0.9rem;
+				font-weight: 600;
+				margin-top: 20px;
+				animation: pulse 2s infinite;
+			}
+
+			@keyframes pulse {
+				0% {
+					box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
+				}
+				70% {
+					box-shadow: 0 0 0 10px rgba(72, 187, 120, 0);
+				}
+				100% {
+					box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
+				}
+			}
+
+			.features {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+				gap: 15px;
+				margin: 30px 0;
+			}
+
+			.feature {
+				background: #f8f9fa;
+				padding: 15px;
+				border-radius: 10px;
+				border: 1px solid #e9ecef;
+			}
+
+			.feature-icon {
+				font-size: 1.5rem;
+				margin-bottom: 8px;
+			}
+
+			.nav-buttons {
+				display: flex;
+				gap: 15px;
+				justify-content: center;
+				margin-top: 30px;
+			}
+
+			.btn {
+				padding: 12px 24px;
+				border: none;
+				border-radius: 8px;
+				font-weight: 600;
+				text-decoration: none;
+				transition: all 0.3s ease;
+				cursor: pointer;
+			}
+
+			.btn-primary {
+				background: #667eea;
+				color: white;
+			}
+
+			.btn-primary:hover {
+				background: #5a6fd8;
+				transform: translateY(-2px);
+			}
+
+			.btn-secondary {
+				background: #e2e8f0;
+				color: #4a5568;
+			}
+
+			.btn-secondary:hover {
+				background: #cbd5e0;
+				transform: translateY(-2px);
+			}
+
+			@media(max-width: 768px) {
+				.example-wrapper {
+					padding: 25px;
+					margin: 10px;
+				}
+
+				h1 {
+					font-size: 2rem;
+				}
+
+				.nav-buttons {
+					flex-direction: column;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="example-wrapper">
+			<div class="success-icon">🎉</div>
+
+			<h1>Bienvenue sur BattutaBot !</h1>
+			<p class="subtitle">Votre application Symfony + React fonctionne parfaitement</p>
+
+			<div class="status-badge">
+				✅ Système Opérationnel
+			</div>
+
+			<div class="features">
+				<div class="feature">
+					<div class="feature-icon">⚡</div>
+					<strong>Symfony 6</strong>
+					<p>Backend robuste</p>
+				</div>
+				<div class="feature">
+					<div class="feature-icon">🎨</div>
+					<strong>React 18</strong>
+					<p>Frontend moderne</p>
+				</div>
+				<div class="feature">
+					<div class="feature-icon">🚀</div>
+					<strong>Vite</strong>
+					<p>Build ultra-rapide</p>
+				</div>
+			</div>
+
+			<div class="info-section">
+				<h2>Informations techniques</h2>
+				<ul class="file-list">
+					<li>
+						<strong>Contrôleur :</strong>
+						<code>src/Controller/HomeController.php</code>
+					</li>
+					<li>
+						<strong>Template :</strong>
+						<code>templates/classiques/exempleSansReact.html.twig</code>
+					</li>
+					<li>
+						<strong>Environnement :</strong>
+						<code>{{ app.environment }}</code>
+					</li>
+					<li>
+						<strong>Debug :</strong>
+						<code>{{ app.debug ? 'Activé' : 'Désactivé' }}</code>
+					</li>
+				</ul>
+			</div>
+
+			<div class="nav-buttons">
+				<a href="{{ path('app_home') }}" class="btn btn-primary">
+					🏠 Accueil React
+				</a>
+				<a href="/api" class="btn btn-secondary">
+					🔗 Voir l'API
+				</a>
+			</div>
+
+			<div style="margin-top: 30px; color: #718096; font-size: 0.9rem;">
+				<p>🚀 Développé avec Symfony & React</p>
+			</div>
+		</div>
+	</body>
+</html>
