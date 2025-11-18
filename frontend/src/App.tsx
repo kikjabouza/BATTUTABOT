@@ -15,6 +15,7 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Ecodefis from "./pages/Ecodefis";
 import Urgence from "./pages/Urgence";
+import CultureId from "./pages/CultureId";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/accompagnant" element={<Accompagnant />} />
           <Route path="/communaute" element={<Communaute />} />
           <Route path="/culture" element={<Culture />} />
+          <Route path="/culture/:id" element={<CultureId />} />
           <Route path="/ecodefis" element={<Ecodefis />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />

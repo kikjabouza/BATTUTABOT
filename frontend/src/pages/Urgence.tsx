@@ -17,7 +17,8 @@ import {
   BookOpen,
   Info,
   Hospital,
-  Flame
+  Flame,
+  Icon
 } from "lucide-react";
 
 const Urgence = () => {
@@ -86,7 +87,7 @@ const Urgence = () => {
   const operateurs = [
     {
       nom: "Maroc Telecom (IAM)",
-      logo: "📱",
+      logo: "/src/assets/maroc-telecom-logo.svg",
       site: "https://www.iam.ma",
       services: ["2G", "3G", "4G", "5G"],
       forfaits: ["Jawal Prepaid", "Forfait Bloqué", "Forfait avec engagement"],
@@ -94,7 +95,7 @@ const Urgence = () => {
     },
     {
       nom: "Orange Maroc",
-      logo: "🍊",
+      logo: "/src/assets/orange-maroc-logo.png",
       site: "https://www.orange.ma",
       services: ["3G", "4G", "4G+"],
       forfaits: ["Orange Prepaid", "Forfaits Mobiles", "Internet Mobile"],
@@ -102,7 +103,7 @@ const Urgence = () => {
     },
     {
       nom: "inwi",
-      logo: "📡",
+      logo: "/src/assets/inwi-logo.webp",
       site: "https://www.inwi.ma",
       services: ["3G", "4G", "4G+"],
       forfaits: ["Carte Prepaid", "Forfaits Bloqués", "Abonnements"],
@@ -111,10 +112,10 @@ const Urgence = () => {
   ];
 
   const commissariats = [
-    { nom: "Commissariat Central Casablanca", adresse: "Boulevard Zerktouni, Casablanca", tel: "+212 5 22 26 76 10" },
-    { nom: "Commissariat Guéliz - Marrakech", adresse: "Rue de la Liberté, Marrakech", tel: "+212 5 24 38 46 01" },
-    { nom: "Commissariat Agdal - Rabat", adresse: "Avenue Al Araar, Rabat", tel: "+212 5 37 67 03 38" },
-    { nom: "Commissariat Fès Médina", adresse: "Place Baghdad, Fès", tel: "+212 5 35 62 34 50" }
+    { nom: "Commissariat Central Casablanca", adresse: "Boulevard Zerktouni, Casablanca", tel: "+212 5 22 26 76 10", url: "https://maps.app.goo.gl/FiDTUZBFQC1Lt4XcA" },
+    { nom: "Commissariat Guéliz - Marrakech", adresse: "Rue de la Liberté, Marrakech", tel: "+212 5 24 38 46 01", url: "https://maps.app.goo.gl/Kzdx8S1q7Nr8vMJX8" },
+    { nom: "Commissariat Agdal - Rabat", adresse: "Avenue Al Araar, Rabat", tel: "+212 5 37 67 03 38", url: "https://maps.app.goo.gl/RKVxHTdxjqtCUsDr7" },
+    { nom: "Commissariat Fès Médina", adresse: "Place Baghdad, Fès", tel: "+212 5 35 62 34 50", url: "https://maps.app.goo.gl/R7ALGPsZdtAjdhS8A" },
   ];
 
   return (
@@ -232,7 +233,7 @@ const Urgence = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <p className="text-sm text-muted-foreground flex items-start gap-2">
+                    <p className="text-sm text-muted-foreground flex items-start gap-2" onClick={() => window.open(commissariat.url, '_blank')} style={{cursor: 'pointer'}}>
                       <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
                       {commissariat.adresse}
                     </p>
@@ -336,7 +337,7 @@ const Urgence = () => {
               {operateurs.map((operateur, index) => (
                 <Card key={index} className={`border-2 ${operateur.color} transition-all hover:shadow-lg`}>
                   <CardHeader>
-                    <div className="text-4xl mb-2">{operateur.logo}</div>
+                    <div className="text-4xl mb-2"><img src={operateur.logo} style={{maxHeight: 60, maxWidth: 60}} alt={operateur.nom} /></div>
                     <CardTitle>{operateur.nom}</CardTitle>
                     <CardDescription>
                       {operateur.services.join(' • ')}
@@ -478,7 +479,7 @@ const Urgence = () => {
                   <Button 
                     variant="outline"
                     className="gap-2"
-                    onClick={() => window.open('https://www.amb-maroc.fr/tourisme/infos-pratiques/', '_blank')}
+                    onClick={() => window.open('http://www.amb-maroc.fr/tourisme/infos-pratiques/', '_blank')}
                   >
                     <Info className="w-4 h-4" />
                     Conseils aux voyageurs

@@ -33,7 +33,7 @@ const Navigation = () => {
           <div className="hidden md:flex items-center gap-4">
             {/* Version SVG plus précise */}
               <button 
-                onClick={() => window.location.href = '/maroc-info'}
+                onClick={() => window.open('https://www.google.com/maps/place/Maroc/', '_blank')}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted/50 transition-colors group"
                 title="Découvrir le Maroc"
               >
@@ -81,7 +81,7 @@ const Navigation = () => {
             <div className="flex flex-col gap-2 pt-4">
               {/* Version SVG plus précise */}
               <button 
-              onClick={() => window.location.href = '/maroc-info'}
+              onClick={() => window.open('https://www.google.com/maps/place/Maroc/', '_blank')}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted/50 transition-colors group"
               title="Découvrir le Maroc"
             >

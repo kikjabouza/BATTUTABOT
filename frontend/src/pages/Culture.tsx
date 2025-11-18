@@ -3,12 +3,160 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Play, BookOpen, Music, Utensils, Palette, Award } from "lucide-react";
-import artisanImage from "@/assets/artisan-pottery.jpg";
-import riadImage from "@/assets/moroccan-riad.jpg";
-import cuisineImage from "@/assets/moroccan-cuisine.jpg";
+import { Play, BookOpen, Music, Utensils, Palette, Award, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+// Table de données des cultures
+const cultures = [
+  {
+    id: 1,
+    titre: "Poterie de Safi",
+    description: "Art céramique ancestral transmis de génération en génération",
+    type: "artisanat",
+    vue: "2D",
+    autres_infos: "Technique unique de glaçure et cuisson",
+    artisant_id: null,
+    artisnat_name: null,
+    image: "/src/assets/images/artisan-pottery.jpg"
+  },
+  {
+    id: 2,
+    titre: "Tajine Marocain",
+    description: "Plat traditionnel mijoté aux épices et saveurs uniques",
+    type: "gastronomie",
+    vue: "2D",
+    autres_infos: "Cuisson lente qui préserve les nutriments",
+    artisant_id: null,
+    artisnat_name: null,
+    image: "/src/assets/images/moroccan-cuisine.jpg"
+  },
+  {
+    id: 3,
+    titre: "Mosquée Hassan II",
+    description: "Joyau architectural avec le plus haut minaret du monde",
+    type: "architecture",
+    vue: "2D",
+    autres_infos: "Mélange d'architecture traditionnelle et moderne",
+    artisant_id: null,
+    artisnat_name: null,
+    image: "/src/assets/images/moroccan-riad.jpg"
+  },
+  {
+    id: 4,
+    titre: "Zellige de Fès",
+    description: "Mosaïques géométriques uniques au monde",
+    type: "artisanat",
+    vue: "360°",
+    autres_infos: "Patrimoine UNESCO, techniques séculaires",
+    artisant_id: "1",
+    artisnat_name: "Mohamed Salah"
+  },
+  {
+    id: 5,
+    titre: "Couscous Royal",
+    description: "Plat de fête aux multiples saveurs et textures",
+    type: "gastronomie",
+    vue: "360°",
+    autres_infos: "Préparation traditionnelle à la vapeur",
+    artisant_id: "2",
+    artisnat_name: "Fatima Zahra"
+  },
+  {
+    id: 6,
+    titre: "Kasbah des Oudayas",
+    description: "Forteresse historique avec vue sur l'océan",
+    type: "architecture",
+    vue: "360°",
+    autres_infos: "Architecture militaire et résidentielle",
+    artisant_id: "3",
+    artisnat_name: "Ahmed Benali"
+  }
+];
 
 const Culture = () => {
+  const navigate = useNavigate();
+
+  // Filtrer les cultures par type
+  const artisanatItems = cultures.filter(item => item.type === "artisanat");
+  const architectureItems = cultures.filter(item => item.type === "architecture");
+  const gastronomieItems = cultures.filter(item => item.type === "gastronomie");
+
+  const handleCardClick = (id: number) => {
+    navigate(`/culture/${id}`);
+  };
+
+  const renderCultureCard = (item: typeof cultures[0]) => (
+    <Card 
+      key={item.id} 
+      className="p-6 space-y-4 hover:border-primary/30 transition-all cursor-pointer group"
+      onClick={() => handleCardClick(item.id)}
+    >
+      {/* Image ou placeholder */}
+      <div className="w-full h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg flex items-center justify-center overflow-hidden">
+        {item.image ? (
+          <img 
+            src={item.image} 
+            alt={item.titre}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <Palette className="w-12 h-12 text-primary" />
+        )}
+      </div>
+
+      {/* Contenu */}
+      <div className="space-y-3">
+        <div className="flex justify-between items-start">
+          <h3 className="text-xl font-bold text-foreground">{item.titre}</h3>
+          <span className={`px-2 py-1 text-xs rounded-full ${
+            item.vue === "360°" 
+              ? "bg-green-100 text-green-800 border border-green-200" 
+              : "bg-blue-100 text-blue-800 border border-blue-200"
+          }`}>
+            {item.vue}
+          </span>
+        </div>
+        
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          {item.description}
+        </p>
+
+        {item.artisnat_name && (
+          <p className="text-xs text-primary font-medium">
+            Artisan: {item.artisnat_name}
+          </p>
+        )}
+
+        {/* Bouton selon le type de vue */}
+        <div className="flex justify-between items-center pt-2">
+          <Button 
+            className={`${
+              item.vue === "360°" 
+                ? "hero-button" 
+                : "bg-gray-600 hover:bg-gray-700"
+            } transition-all`}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCardClick(item.id);
+            }}
+          >
+            {item.vue === "360°" ? (
+              <>
+                <Play className="mr-2 h-4 w-4" />
+                Visite {item.vue}
+              </>
+            ) : (
+              <>
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Voir détails
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen bg-transparent">
       <Navigation />
@@ -28,15 +176,15 @@ const Culture = () => {
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto gap-2">
               <TabsTrigger value="artisanat" className="flex items-center gap-2">
                 <Palette className="w-4 h-4" />
-                Artisanat
+                Artisanat ({artisanatItems.length})
               </TabsTrigger>
               <TabsTrigger value="architecture" className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4" />
-                Architecture
+                Architecture ({architectureItems.length})
               </TabsTrigger>
               <TabsTrigger value="gastronomie" className="flex items-center gap-2">
                 <Utensils className="w-4 h-4" />
-                Gastronomie
+                Gastronomie ({gastronomieItems.length})
               </TabsTrigger>
               <TabsTrigger value="musique" className="flex items-center gap-2">
                 <Music className="w-4 h-4" />
@@ -50,107 +198,23 @@ const Culture = () => {
 
             {/* Artisanat Tab */}
             <TabsContent value="artisanat" className="space-y-8">
-              <Card className="overflow-hidden">
-                <div className="grid grid-cols-1 md:grid-cols-2">
-                  <div className="relative h-80">
-                    <img 
-                      src={artisanImage} 
-                      alt="Artisan" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-8 space-y-4">
-                    <h2 className="text-3xl font-bold text-foreground">L'Artisanat Marocain</h2>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Le Maroc est réputé pour son artisanat d'exception, transmis de génération en génération. 
-                      Poterie de Safi, tapis berbères, zellige de Fès, cuir de Marrakech... chaque région possède 
-                      ses spécialités uniques.
-                    </p>
-                    <Button className="hero-button">
-                      <Play className="mr-2 h-4 w-4" />
-                      Visite virtuelle 360°
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  { title: "Poterie de Safi", desc: "Art céramique ancestral" },
-                  { title: "Zellige de Fès", desc: "Mosaïques géométriques" },
-                  { title: "Tapis Berbères", desc: "Tissage traditionnel" },
-                ].map((item, i) => (
-                  <Card key={i} className="p-6 space-y-3 hover:border-primary/30 transition-all cursor-pointer">
-                    <div className="w-full h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg flex items-center justify-center">
-                      <Palette className="w-12 h-12 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-bold text-foreground">{item.title}</h3>
-                    <p className="text-muted-foreground">{item.desc}</p>
-                  </Card>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {artisanatItems.map(renderCultureCard)}
               </div>
             </TabsContent>
 
             {/* Architecture Tab */}
             <TabsContent value="architecture" className="space-y-8">
-              <Card className="overflow-hidden">
-                <div className="grid grid-cols-1 md:grid-cols-2">
-                  <div className="relative h-80">
-                    <img 
-                      src={riadImage} 
-                      alt="Architecture" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-8 space-y-4">
-                    <h2 className="text-3xl font-bold text-foreground">Architecture Marocaine</h2>
-                    <p className="text-muted-foreground leading-relaxed">
-                      L'architecture marocaine reflète la richesse de son histoire. Des riads aux médinas, 
-                      des kasbahs aux mosquées, chaque édifice raconte une histoire millénaire.
-                    </p>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold">Sites emblématiques :</h4>
-                      <ul className="space-y-1 text-muted-foreground">
-                        <li>• Mosquée Hassan II - Casablanca</li>
-                        <li>• Médina de Fès - UNESCO</li>
-                        <li>• Koutoubia - Marrakech</li>
-                        <li>• Kasbah des Oudayas - Rabat</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {architectureItems.map(renderCultureCard)}
+              </div>
             </TabsContent>
 
             {/* Gastronomie Tab */}
             <TabsContent value="gastronomie" className="space-y-8">
-              <Card className="overflow-hidden">
-                <div className="grid grid-cols-1 md:grid-cols-2">
-                  <div className="relative h-80">
-                    <img 
-                      src={cuisineImage} 
-                      alt="Gastronomie" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-8 space-y-4">
-                    <h2 className="text-3xl font-bold text-foreground">Gastronomie Marocaine</h2>
-                    <p className="text-muted-foreground leading-relaxed">
-                      La cuisine marocaine est un art culinaire raffiné, mêlant épices, saveurs et traditions. 
-                      Chaque plat est une invitation au voyage des sens.
-                    </p>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold">Plats emblématiques :</h4>
-                      <ul className="space-y-1 text-muted-foreground">
-                        <li>🍲 Tagine - Mijoté aux épices</li>
-                        <li>🥘 Couscous - Plat national</li>
-                        <li>🥧 Pastilla - Feuilleté sucré-salé</li>
-                        <li>🍵 Thé à la menthe - Boisson traditionnelle</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {gastronomieItems.map(renderCultureCard)}
+              </div>
             </TabsContent>
 
             {/* Musique & Traditions Tabs */}
@@ -175,18 +239,6 @@ const Culture = () => {
             </TabsContent>
           </Tabs>
 
-          {/* Quiz Section */}
-          <Card className="p-8 mt-12 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-primary/20">
-            <div className="text-center space-y-4">
-              <h3 className="text-2xl font-bold text-foreground">Quiz Culturel</h3>
-              <p className="text-muted-foreground">
-                Testez vos connaissances sur la culture marocaine
-              </p>
-              <Button className="hero-button" size="lg">
-                Commencer le quiz
-              </Button>
-            </div>
-          </Card>
         </div>
       </main>
 
