@@ -30,22 +30,23 @@ class Guide
     private ?string $certification = null;
 
     #[ORM\Column(options: ['default' => false])]
-    private ?bool $accessibiliteHandicap = null;
+    private ?bool $accessibiliteHandicap = false;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $disponibilities = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $noteMoyenne = null;
+    #[ORM\Column(nullable: true, options: ['default' => 0.0])]
+    private ?float $noteMoyenne = 0.0;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $totalAvis = null;
+    #[ORM\Column(nullable: true, options: ['default' => 0])]
+    private ?int $totalAvis = 0;
 
     #[ORM\Column(options: ['default' => false])]
-    private ?bool $estCertifie = null;
+    private ?bool $estCertifie = false;
 
-    #[ORM\ManyToOne]
-    private ?Utilisateur $idUtilisateur = null;
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'id', nullable: false)]
+    private ?Utilisateur $utilisateur = null;
 
     public function getId(): ?int
     {
@@ -172,14 +173,14 @@ class Guide
         return $this;
     }
 
-    public function getIdUtilisateur(): ?Utilisateur
+    public function getUtilisateur(): ?Utilisateur
     {
-        return $this->idUtilisateur;
+        return $this->utilisateur;
     }
 
-    public function setIdUtilisateur(?Utilisateur $idUtilisateur): static
+    public function setUtilisateur(?Utilisateur $utilisateur): static
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

@@ -18,7 +18,7 @@ class ProfilTouriste
     private ?string $budget = null;
 
     #[ORM\Column(length: 100, nullable: true)]
-    private ?string $StyleVoyage = null;
+    private ?string $styleVoyage = null; // Correction: styleVoyage au lieu de StyleVoyage
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $preferencesCulturelles = null;
@@ -37,6 +37,9 @@ class ProfilTouriste
 
     #[ORM\ManyToOne(inversedBy: 'profilTouristes')]
     private ?Utilisateur $idUtilisateur = null;
+
+    #[ORM\Column(length: 20, options: ['default' => 'moyen'])]
+    private ?string $niveauEconomique = 'moyen';
 
     public function getId(): ?int
     {
@@ -57,12 +60,12 @@ class ProfilTouriste
 
     public function getStyleVoyage(): ?string
     {
-        return $this->StyleVoyage;
+        return $this->styleVoyage;
     }
 
-    public function setStyleVoyage(?string $StyleVoyage): static
+    public function setStyleVoyage(?string $styleVoyage): static
     {
-        $this->StyleVoyage = $StyleVoyage;
+        $this->styleVoyage = $styleVoyage;
 
         return $this;
     }
@@ -137,5 +140,45 @@ class ProfilTouriste
         $this->idUtilisateur = $idUtilisateur;
 
         return $this;
+    }
+
+    public function getNiveauEconomique(): ?string
+    {
+        return $this->niveauEconomique;
+    }
+
+    public function setNiveauEconomique(string $niveauEconomique): static
+    {
+        $niveauxValides = ['eco', 'moyen', 'confort', 'luxe'];
+        
+        if (!in_array($niveauEconomique, $niveauxValides)) {
+            throw new \InvalidArgumentException('Niveau économique invalide. Valeurs acceptées: ' . implode(', ', $niveauxValides));
+        }
+        
+        $this->niveauEconomique = $niveauEconomique;
+        return $this;
+    }
+
+    /**
+     * Méthode utilitaire pour déterminer automatiquement le niveau économique basé sur le budget
+     */
+    public function determinerNiveauEconomiqueAuto(): void
+    {
+        if (!$this->budget) {
+            $this->niveauEconomique = 'moyen';
+            return;
+        }
+
+        $budget = (float) $this->budget;
+        
+        if ($budget <= 50) {
+            $this->niveauEconomique = 'eco';
+        } elseif ($budget <= 100) {
+            $this->niveauEconomique = 'moyen';
+        } elseif ($budget <= 200) {
+            $this->niveauEconomique = 'confort';
+        } else {
+            $this->niveauEconomique = 'luxe';
+        }
     }
 }
