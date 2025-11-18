@@ -197,7 +197,7 @@ const Inscription = () => {
                   </Button>
                   <Button 
                     className="flex-1 hero-button" 
-                    size="lg"
+                    size="lg" onClick={() => window.location.href = '/quise-registration'}
                   >
                     Créer mon compte
                     <Sparkles className="ml-2 h-5 w-5" />

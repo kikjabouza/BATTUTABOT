@@ -3,7 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Navigation from "@/components/Navigation";
 import { MapPin, Users, MessageCircle, Calendar, Sparkles } from "lucide-react";
-
+import NavCnx from "@/components/NavCnx";
+import Footer from "@/components/Footer";
 const Communaute = () => {
   const nearbyTravelers = [
     {
@@ -66,7 +67,7 @@ const Communaute = () => {
 
   return (
     <div className="min-h-screen bg-transparent">
-      <Navigation />
+      <NavCnx />
       
       <main className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-7xl">
@@ -200,6 +201,8 @@ const Communaute = () => {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

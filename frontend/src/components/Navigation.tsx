@@ -10,7 +10,7 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3" onClick={() => window.location.href = '/'} style={{cursor: "pointer"}}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
               <Compass className="w-6 h-6 text-white" />
             </div>

@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import NavCnx from "@/components/NavCnx";
 import { Sparkles, MapPin, Calendar, DollarSign, Leaf, Download, Share2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,8 +26,7 @@ const PlanVoyage = () => {
 
   return (
     <div className="min-h-screen bg-transparent">
-      <Navigation />
-      
+      <NavCnx />
       <main className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12 space-y-4">
@@ -254,7 +254,7 @@ const PlanVoyage = () => {
                 <Button variant="outline" size="lg" className="flex-1">
                   Modifier l'itinéraire
                 </Button>
-                <Button className="flex-1 hero-button" size="lg">
+                <Button className="flex-1 hero-button" size="lg" onClick={() => window.open('/accompagnant', '_blank')}>
                   Activer l'accompagnant IA
                 </Button>
               </div>
@@ -262,6 +262,7 @@ const PlanVoyage = () => {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

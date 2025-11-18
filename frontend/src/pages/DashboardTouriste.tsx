@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
+import NavCnx from "@/components/NavCnx";
+import Footer from "@/components/Footer";
 import { 
   MapPin, 
   Calendar, 
@@ -11,6 +13,8 @@ import {
   ArrowRight,
   Leaf
 } from "lucide-react";
+import Culture from "./Culture";
+import { it } from "node:test";
 
 const DashboardTouriste = () => {
   const quickActions = [
@@ -67,7 +71,7 @@ const DashboardTouriste = () => {
 
   return (
     <div className="min-h-screen bg-transparent">
-      <Navigation />
+      <NavCnx />
       
       <main className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-7xl">
@@ -177,6 +181,7 @@ const DashboardTouriste = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

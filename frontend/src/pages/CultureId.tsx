@@ -15,7 +15,7 @@ const cultures = [
     autres_infos: "Technique unique de glaçure et cuisson",
     artisant_id: null,
     artisnat_name: null,
-    image: "/assets/artisan-pottery.jpg"
+    image: "assets/artisan-pottery-safi.jpg"
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ const cultures = [
     autres_infos: "Cuisson lente qui préserve les nutriments",
     artisant_id: null,
     artisnat_name: null,
-    image: "/assets/moroccan-cuisine.jpg"
+    image: "assets/moroccan-cuisine.jpg"
   },
   {
     id: 3,
@@ -41,7 +41,7 @@ const cultures = [
     autres_infos: "Mélange d'architecture traditionnelle et moderne",
     artisant_id: null,
     artisnat_name: null,
-    image: "/assets/moroccan-riad.jpg"
+    image: "assets/moroccan-riad.jpg"// pour ces images + images de baground sur design , pas besoin d'import , puisque il accede deja a react et cherche l image non hasher et deja on doit comencer chemin par assets car sur symfony c dans public , alors qu'on copy directement sans hash vers public du backend
   },
   {
     id: 4,
@@ -80,6 +80,7 @@ const cultures = [
     artisnat_name: "Ahmed Benali"
   }
 ];
+
 const CultureDetail = () => {
   const { id } = useParams();
   const culture = cultures.find(item => item.id === Number(id));

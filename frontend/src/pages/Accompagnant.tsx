@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Navigation from "@/components/Navigation";
+import NavCnx from "@/components/NavCnx";
+import Footer from "@/components/Footer";
 import { Send, MapPin, Cloud, Globe, Sparkles, Navigation as NavigationIcon } from "lucide-react";
 
 const Accompagnant = () => {
@@ -23,7 +25,7 @@ const Accompagnant = () => {
 
   return (
     <div className="min-h-screen bg-transparent">
-      <Navigation />
+      <NavCnx />
       
       <main className="pt-32 pb-6 px-4">
         <div className="container mx-auto max-w-6xl">
@@ -163,6 +165,7 @@ const Accompagnant = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

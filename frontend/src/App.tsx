@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import Ecodefis from "./pages/Ecodefis";
 import Urgence from "./pages/Urgence";
 import CultureId from "./pages/CultureId";
+import QuiseRegistration from "./pages/QuiseRegistration";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/urgence" element={<Urgence />} />
+          <Route path="/quise-registration" element={<QuiseRegistration />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

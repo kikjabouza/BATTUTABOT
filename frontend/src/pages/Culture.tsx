@@ -17,7 +17,7 @@ const cultures = [
     autres_infos: "Technique unique de glaçure et cuisson",
     artisant_id: null,
     artisnat_name: null,
-    image: "/src/assets/images/artisan-pottery.jpg"
+    image: "assets/artisan-pottery-safi.jpg"
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ const cultures = [
     autres_infos: "Cuisson lente qui préserve les nutriments",
     artisant_id: null,
     artisnat_name: null,
-    image: "/src/assets/images/moroccan-cuisine.jpg"
+    image: "assets/moroccan-cuisine.jpg"
   },
   {
     id: 3,
@@ -39,7 +39,7 @@ const cultures = [
     autres_infos: "Mélange d'architecture traditionnelle et moderne",
     artisant_id: null,
     artisnat_name: null,
-    image: "/src/assets/images/moroccan-riad.jpg"
+    image: "assets/moroccan-riad.jpg"
   },
   {
     id: 4,
