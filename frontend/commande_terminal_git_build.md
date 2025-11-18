@@ -45,7 +45,7 @@ git add .
 git commit -m "Ton message de commit"
 
 # Pousser vers la branche Khadija
-git push -u origin Khadija
+git push -u origin khadija
 ```
 
 **Important** : Remplace `[url_du_nouveau_repo]` par l'URL de ton nouveau repository GitHub !
