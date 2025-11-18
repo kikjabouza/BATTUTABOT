@@ -36,7 +36,7 @@ const Inscription = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
       
       <main className="pt-32 pb-20 px-4">

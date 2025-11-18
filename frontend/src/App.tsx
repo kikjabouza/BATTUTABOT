@@ -13,6 +13,8 @@ import Culture from "./pages/Culture";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import Ecodefis from "./pages/Ecodefis";
+import Urgence from "./pages/Urgence";
 
 const queryClient = new QueryClient();
 
@@ -30,8 +32,10 @@ const App = () => (
           <Route path="/accompagnant" element={<Accompagnant />} />
           <Route path="/communaute" element={<Communaute />} />
           <Route path="/culture" element={<Culture />} />
+          <Route path="/ecodefis" element={<Ecodefis />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
+          <Route path="/urgence" element={<Urgence />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -61,7 +61,7 @@ const UserTypeSelector = () => {
                 className="user-type-card group"
               >
                 <div className="p-6 space-y-6">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${userType.gradient} flex items-center justify-center transition-transform group-hover:scale-110`}>
+                  <div className={`w-16 h-16 rounded-2xl bg-[url('assets/bg_vers_zlij.png')] bg-cover bg-center flex items-center justify-center transition-transform group-hover:scale-110`}>
                     <Icon className="w-8 h-8 text-primary" />
                   </div>
 
@@ -75,7 +75,7 @@ const UserTypeSelector = () => {
                   </div>
 
                   <Button 
-                    className="w-full group/btn"
+                    className="w-full group/btn bg-[url('assets/background.svg')] bg-cover bg-center color-white"
                     variant="outline"
                     onClick={() => window.location.href = '/inscription'}
                   >

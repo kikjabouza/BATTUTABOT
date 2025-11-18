@@ -28,14 +28,14 @@ const About = () => {
   ];
 
   const team = [
-    { name: "Dr. Amina Bennani", role: "CEO & Fondatrice", speciality: "IA & Tourisme" },
-    { name: "Youssef Alami", role: "CTO", speciality: "Intelligence Artificielle" },
-    { name: "Fatima Zahra", role: "Directrice Culture", speciality: "Patrimoine Marocain" },
-    { name: "Omar Idrissi", role: "Chef de Produit", speciality: "Expérience Utilisateur" }
+    { name: "Jallam Salma", role: "Chef Projet", speciality: "Big Data" },
+    { name: "Jazouli Khadija", role: "Collaboratrice", speciality: "Big Data" },
+    { name: "EL Hamidi Jillali", role: "Collaborateur", speciality: "Intelligence Artificielle" },
+    { name: "Joyce Fortuna", role: "Collaboratrice", speciality: "Big Data" }
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
       
       <main className="pt-32 pb-20 px-4">
@@ -64,12 +64,12 @@ const About = () => {
                 parcouru le monde au 14ème siècle, découvrant cultures et merveilles.
               </p>
               <p>
-                En 2024, nous avons décidé de réinventer le tourisme marocain en créant un compagnon IA intelligent 
+                En 2025, nous avons décidé de réinventer le tourisme marocain en créant un compagnon IA intelligent 
                 qui guide, conseille et enrichit l'expérience de chaque voyageur, tout en préservant l'authenticité 
                 culturelle et en promouvant le développement durable.
               </p>
               <p>
-                Aujourd'hui, Battuta Bot connecte des milliers de voyageurs avec des artisans locaux, des guides 
+                Aujourd'hui, Battuta Bot connecte lesvoyageurs avec des artisans locaux, des guides 
                 passionnés et des hébergements éco-responsables à travers tout le Maroc.
               </p>
             </div>

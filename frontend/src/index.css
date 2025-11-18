@@ -127,10 +127,13 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+@layer base {
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply text-foreground;
+    background: none !important;
   }
+}
+
 }
 
 @layer components {
@@ -215,4 +218,11 @@ All colors MUST be HSL.
     background-size: 200% auto;
     animation: gradient 3s ease infinite;
   }
+}
+body {
+  background-image: url('/src/assets/background.svg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
 }

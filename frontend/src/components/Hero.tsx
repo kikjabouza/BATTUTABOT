@@ -12,7 +12,7 @@ const Hero = () => {
           alt="Beautiful Moroccan landscape" 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/100 via-background/10 to-background/0"></div>
       </div>
 
       {/* Content */}
@@ -31,11 +31,11 @@ const Hero = () => {
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed" style={{ color: "white" }}>
             Votre compagnon IA intelligent pour un voyage authentique, durable et inoubliable au cœur du patrimoine marocain.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 z-12">
             <Button 
               size="lg" 
               className="hero-button group"
@@ -57,7 +57,7 @@ const Hero = () => {
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background/100 via-background/10 to-transparent z-1"></div>
     </section>
   );
 };

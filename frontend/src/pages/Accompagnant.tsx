@@ -22,7 +22,7 @@ const Accompagnant = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <Navigation />
       
       <main className="pt-32 pb-6 px-4">
