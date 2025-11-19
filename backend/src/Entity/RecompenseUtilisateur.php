@@ -30,7 +30,7 @@ class RecompenseUtilisateur
 
     public function __construct()
     {
-        $this->dateCreation = new \DateTime();
+        $this->dateObtention = new \DateTime();
     }
 
     public function getId(): ?int

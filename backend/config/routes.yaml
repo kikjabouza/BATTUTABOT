@@ -1,5 +1,36 @@
-controllers:
+# config/routes.yaml
+
+# 1. ROUTES API - TOURISTE
+api_touriste:
+    resource: ../src/Controller/API/touriste/
+    prefix: /api
+    type: attribute
+
+# 2. ROUTES API - SECURITY  
+api_security:
+    resource: ../src/Controller/Security/
+    prefix: /api
+    type: attribute
+
+# 3. ROUTES API - CONTROLLERS RACINE (Questionnaire, User)
+api_questionnaire:
+    resource: ../src/Controller/QuestionnaireController.php
+    prefix: /api
+    type: attribute
+
+api_user:
+    resource: ../src/Controller/UserController.php
+    prefix: /api
+    type: attribute
+
+# 4. ROUTES FRONTALES (exclure les dossiers API et Security)
+app:
     resource:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+    exclude:
+        - '../src/Controller/API/'
+        - '../src/Controller/Security/'
+        - '../src/Controller/QuestionnaireController.php'
+        - '../src/Controller/UserController.php'
