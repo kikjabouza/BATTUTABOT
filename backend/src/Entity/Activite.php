@@ -18,7 +18,7 @@ class Activite
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $descritption = null;
+    private ?string $description = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $type = null;
@@ -67,14 +67,14 @@ class Activite
         return $this;
     }
 
-    public function getDescritption(): ?string
+    public function getDescription(): ?string
     {
-        return $this->descritption;
+        return $this->description;
     }
 
-    public function setDescritption(?string $descritption): static
+    public function setDescription(?string $description): static
     {
-        $this->descritption = $descritption;
+        $this->description = $description;
 
         return $this;
     }
