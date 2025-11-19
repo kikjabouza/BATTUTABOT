@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\API\touriste;
+namespace App\Controller\API\Touriste;
 
 use App\Entity\Hebergement;
 use App\Entity\Utilisateur;

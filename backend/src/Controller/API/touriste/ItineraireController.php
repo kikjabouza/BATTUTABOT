@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\API\touriste;
+namespace App\Controller\API\Touriste;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
