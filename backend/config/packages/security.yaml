@@ -1,18 +1,18 @@
 security:
     password_hashers:
-        App\Entity\Utilisateur: 'auto'
-    
+        App\Entity\Utilisateur: "auto"
+
     providers:
         app_user_provider:
             entity:
                 class: App\Entity\Utilisateur
                 property: email
-    
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        
+
         main:
             lazy: true
             provider: app_user_provider
@@ -20,13 +20,19 @@ security:
                 check_path: api_auth_login
                 username_path: email
                 password_path: password
-            
             logout:
                 path: app_logout
-            
-            # Activer l'authentification stateless pour API
-            stateless: true
-    
+            stateless: false
+
     access_control:
-        - { path: ^/api/auth, roles: PUBLIC_ACCESS }
+        # ⭐ PUBLIC ACCESS - Routes d'authentification et questions
+        - { path: ^/api/auth/(register|login|logout)$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/questionnaire/questions, roles: PUBLIC_ACCESS }
+        - { path: ^/api/questionnaire/reponses, roles: PUBLIC_ACCESS }
+
+        # ⭐ AUTHENTIFICATION REQUISE - Routes protégées
+        - { path: ^/api/auth/me, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/choisir-profil, roles: PUBLIC_ACCESS }
+
+        # ⭐ Règle générale pour toutes les autres API
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

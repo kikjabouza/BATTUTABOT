@@ -23,11 +23,27 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // ⭐ AJOUTEZ LA CONFIGURATION DU PROXY ICI
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('❌ Proxy error:', err);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log('🔄 Proxy request:', req.method, req.url);
+          });
+        }
+      }
+    }
   },
   plugins: [
     react(), 
     mode === "development" && componentTagger(),
-    copyAssetsPlugin() // ← Ajout du plugin
+    copyAssetsPlugin()
   ].filter(Boolean),
   resolve: {
     alias: {

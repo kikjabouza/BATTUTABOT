@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\API;
+namespace App\Controller\API\Touriste;
 
 use App\Entity\GroupeCommunaute;
 use App\Repository\DestinationRepository;

@@ -35,6 +35,11 @@ git fetch origin
 git checkout --track origin/Khadija
 ```
 
+## merger avant add .
+
+````bash
+git merge symContr
+
 ## 4. Pusher tes changements
 
 ```bash
@@ -46,7 +51,7 @@ git commit -m "Ton message de commit"
 
 # Pousser vers la branche Khadija
 git push -u origin khadija
-```
+````
 
 **Important** : Remplace `[url_du_nouveau_repo]` par l'URL de ton nouveau repository GitHub !
 
@@ -91,3 +96,23 @@ Tu veux écraser `khadija` avec quelle branche ? `KhadijaReact` ? `main` ?
 # npm run build → crée le dossier dist/
 
 # npm run build:copy → build + copie le contenu de dist/ vers ../backend/public
+
+## j'ai mon projet separer en deux dossier backend (symfony) et frontend(react) maintenenant mon equipe ilsont creer les routes api dans controllers symfony et moi je dois les appele dans react comment faire par exemple avec ces routes
+
+Utilisateur remplit le formulaire
+↓
+React valide les données
+↓
+Appel à apiService.register()
+↓
+Fetch vers Symfony /api/auth/register
+↓
+Symfony traite et valide
+↓
+Si succès → Symfony retourne {success: true, user: {...}}
+↓
+React stocke l'utilisateur et redirige
+↓
+Si échec → Symfony retourne {success: false, error: "..."}
+↓
+React affiche l'erreur

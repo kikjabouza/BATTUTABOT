@@ -28,7 +28,7 @@ class ArtisanController extends AbstractController
         }
 
         // serialisation simple
-        $data = array_map(function(Artisan $a) {
+        $data = array_map(function (Artisan $a) {
             return [
                 'id' => $a->getId(),
                 'typeArtisanat' => $a->getTypeArtisanat(),

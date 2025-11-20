@@ -1,6 +1,6 @@
 <?php
 // src/Controller/API/TransportController.php
-namespace App\Controller\API;
+namespace App\Controller\API\Touriste;
 
 use App\Entity\Transport;
 use App\Repository\TransportRepository;
@@ -21,7 +21,7 @@ class TransportController extends AbstractController
         $limit = max(1, (int)$request->query->get('limit', 20));
         $items = $repo->paginate($page, $limit);
 
-        $data = array_map(function(Transport $t){
+        $data = array_map(function (Transport $t) {
             return [
                 'id' => $t->getId(),
                 'type' => $t->getType(),
@@ -67,7 +67,7 @@ class TransportController extends AbstractController
         $data = json_decode($request->getContent(), true);
         if (!$data) return $this->json(['error' => 'Invalid JSON'], 400);
 
-        $required = ['type','operateur','prix','duree','scoreEco','emissionCo2','destinationDepart','destinationArrivee'];
+        $required = ['type', 'operateur', 'prix', 'duree', 'scoreEco', 'emissionCo2', 'destinationDepart', 'destinationArrivee'];
         foreach ($required as $f) if (!isset($data[$f])) return $this->json(['error' => "Missing field: $f"], 400);
 
         $dep = $destRepo->find($data['destinationDepart']);

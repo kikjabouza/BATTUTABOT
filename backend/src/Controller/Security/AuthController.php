@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller\Security;
+
 use App\Entity\Utilisateur;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,13 +17,13 @@ final class AuthController extends AbstractController
 {
     #[Route('/api/auth/register', name: 'api_auth_register', methods: ['POST'])]
     public function register(
-        Request $request, 
-        EntityManagerInterface $em, 
+        Request $request,
+        EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher,
         UtilisateurRepository $userRepo
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
-        
+
         // Validation
         if (!isset($data['email']) || !isset($data['password'])) {
             return $this->json([
@@ -30,7 +31,7 @@ final class AuthController extends AbstractController
                 'error' => 'Email et mot de passe requis'
             ], 400);
         }
-        
+
         // Vérifier si l'email existe déjà
         $existingUser = $userRepo->findOneBy(['email' => $data['email']]);
         if ($existingUser) {
@@ -39,19 +40,25 @@ final class AuthController extends AbstractController
                 'error' => 'Cet email est déjà utilisé'
             ], 400);
         }
-        
+
         // Créer un nouvel utilisateur
         $user = new Utilisateur();
         $user->setEmail($data['email']);
         $user->setMotDePasse($passwordHasher->hashPassword($user, $data['password']));
         $user->setPrenom($data['prenom'] ?? '');
         $user->setNom($data['nom'] ?? '');
-        $user->setRole('ROLE_USER');
+        $user->setRole($data['role'] ?? 'ROLE_USER');
+        $user->setDateCreation(new \DateTime());
+        $user->setTelephone($data['telephone'] ?? null);
+        $user->setLanguePreferee($data['langue_preferee'] ?? null);
+        $user->setBesoinsAccessibilite($data['besoins_accessibilite'] ?? null);
+        $user->setDateNaissance($data['date_naissance'] ? new \DateTime($data['date_naissance']) : null);
+        $user->setAvatar($data['avatar'] ?? null);
         $user->setEstActif(true);
-        
+
         $em->persist($user);
         $em->flush();
-        
+
         return $this->json([
             'success' => true,
             'message' => 'Utilisateur créé avec succès',
@@ -59,7 +66,8 @@ final class AuthController extends AbstractController
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'prenom' => $user->getPrenom(),
-                'nom' => $user->getNom()
+                'nom' => $user->getNom(),
+                'role' => $user->getRole()
             ]
         ], 201);
     }
@@ -73,7 +81,7 @@ final class AuthController extends AbstractController
                 'error' => 'Email ou mot de passe incorrect'
             ], 401);
         }
-        
+
         return $this->json([
             'success' => true,
             'message' => 'Connexion réussie',
@@ -96,7 +104,7 @@ final class AuthController extends AbstractController
                 'error' => 'Non authentifié'
             ], 401);
         }
-        
+
         return $this->json([
             'success' => true,
             'user' => [
@@ -112,10 +120,19 @@ final class AuthController extends AbstractController
         ]);
     }
 
+    // Dans AuthController.php - modifier la méthode logout
     #[Route('/api/auth/logout', name: 'api_auth_logout', methods: ['POST'])]
-    public function logout(): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
-        // Symfony gère la déconnexion automatiquement
+        // Invalider la session
+        $session = $request->getSession();
+        if ($session) {
+            $session->invalidate();
+        }
+
+        // Déconnecter l'utilisateur Symfony
+        $this->container->get('security.token_storage')->setToken(null);
+
         return $this->json([
             'success' => true,
             'message' => 'Déconnexion réussie'

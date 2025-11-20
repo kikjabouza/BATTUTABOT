@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build && npm run copy-all-assets",
-    "build:dev": "vite build --mode development",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "build:copy": "vite build && cpx \"dist/**/*\" ../backend/public",
-    "copy-all-assets": "xcopy /E /I src/assets ../backend/public/src-assets\\ || robocopy src/assets ../backend/public/assets /E || echo Copy completed"
-  },
+  "dev": "vite",
+  "build": "vite build && npm run copy-assets",
+  "build:dev": "vite build --mode development",
+  "lint": "eslint .",
+  "preview": "vite preview",
+  "copy-assets": "cpx \"dist/**/*.{js,css,html,json,ico,png,jpg,jpeg,svg}\" ../backend/public/ || echo 'Copy completed'",
+  "copy-all-assets": "cpx \"src/assets/**/*\" ../backend/public/assets/ || echo 'Assets copy completed'"
+},
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",
@@ -79,6 +79,8 @@
     "globals": "^15.15.0",
     "lovable-tagger": "^1.1.11",
     "postcss": "^8.5.6",
+    "rimraf": "^6.1.0",
+    "rsync": "^0.6.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",

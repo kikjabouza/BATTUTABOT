@@ -17,15 +17,26 @@ class GuideController extends AbstractController
     #[Route('/api/guides', name: 'api_guides_list', methods: ['GET'])]
     public function listGuides(GuideRepository $guideRepo, Request $request): JsonResponse
     {
-        // Filtres possibles
+        // Récupérer tous les guides (filtrage manuellement)
+        $guides = $guideRepo->findAll();
+
+        // Appliquer les filtres manuellement
         $specialisation = $request->query->get('specialisation');
         $langue = $request->query->get('langue');
-        $destination = $request->query->get('destination');
 
-        $guides = $guideRepo->findByFilters($specialisation, $langue, $destination);
+        $guidesFiltres = [];
+        foreach ($guides as $guide) {
+            if ($specialisation && stripos($guide->getSpecialisations(), $specialisation) === false) {
+                continue;
+            }
+            if ($langue && stripos($guide->getLanguesParlees(), $langue) === false) {
+                continue;
+            }
+            $guidesFiltres[] = $guide;
+        }
 
         $data = [];
-        foreach ($guides as $guide) {
+        foreach ($guidesFiltres as $guide) {
             $data[] = $this->serializeGuide($guide);
         }
 
@@ -61,7 +72,7 @@ class GuideController extends AbstractController
     ): JsonResponse {
         // Vérifier si l'utilisateur est déjà guide
         $existingGuide = $em->getRepository(Guide::class)->findOneBy(['utilisateur' => $user]);
-        
+
         if ($existingGuide) {
             return $this->json([
                 'success' => false,
@@ -87,12 +98,14 @@ class GuideController extends AbstractController
         $guide->setUtilisateur($user);
         $guide->setSpecialisations($data['specialisations']);
         $guide->setLanguesParlees($data['languesParlees']);
-        $guide->setExperienceAnnees($data['experienceAnnees']);
-        $guide->setTarifHoraire($data['tarifHoraire']);
+        $guide->setExperienceAnnees((int)$data['experienceAnnees']);
+        $guide->setTarifHoraire((string)$data['tarifHoraire']);
         $guide->setCertification($data['certification'] ?? null);
         $guide->setAccessibiliteHandicap($data['accessibiliteHandicap'] ?? false);
         $guide->setDisponibilities($data['disponibilities'] ?? '{}');
         $guide->setEstCertifie($data['estCertifie'] ?? false);
+        $guide->setNoteMoyenne(0.0);
+        $guide->setTotalAvis(0);
 
         $em->persist($guide);
         $em->flush();
@@ -147,22 +160,22 @@ class GuideController extends AbstractController
             $guide->setLanguesParlees($data['languesParlees']);
         }
         if (isset($data['experienceAnnees'])) {
-            $guide->setExperienceAnnees($data['experienceAnnees']);
+            $guide->setExperienceAnnees((int)$data['experienceAnnees']);
         }
         if (isset($data['tarifHoraire'])) {
-            $guide->setTarifHoraire($data['tarifHoraire']);
+            $guide->setTarifHoraire((string)$data['tarifHoraire']);
         }
         if (isset($data['certification'])) {
             $guide->setCertification($data['certification']);
         }
         if (isset($data['accessibiliteHandicap'])) {
-            $guide->setAccessibiliteHandicap($data['accessibiliteHandicap']);
+            $guide->setAccessibiliteHandicap((bool)$data['accessibiliteHandicap']);
         }
         if (isset($data['disponibilities'])) {
             $guide->setDisponibilities($data['disponibilities']);
         }
         if (isset($data['estCertifie'])) {
-            $guide->setEstCertifie($data['estCertifie']);
+            $guide->setEstCertifie((bool)$data['estCertifie']);
         }
 
         $em->flush();
@@ -179,7 +192,7 @@ class GuideController extends AbstractController
     {
         $specialisations = [
             'Culture et Histoire',
-            'Randonnée et Nature', 
+            'Randonnée et Nature',
             'Gastronomie',
             'Artisanat Local',
             'Éco-tourisme',
@@ -199,15 +212,17 @@ class GuideController extends AbstractController
      */
     private function serializeGuide(Guide $guide, bool $detailsComplets = false): array
     {
+        $utilisateur = $guide->getUtilisateur();
+
         $data = [
             'id' => $guide->getId(),
             'utilisateur' => [
-                'id' => $guide->getUtilisateur()->getId(),
-                'prenom' => $guide->getUtilisateur()->getPrenom(),
-                'nom' => $guide->getUtilisateur()->getNom(),
-                'email' => $guide->getUtilisateur()->getEmail(),
-                'telephone' => $guide->getUtilisateur()->getTelephone(),
-                'avatar' => $guide->getUtilisateur()->getAvatar()
+                'id' => $utilisateur->getId(),
+                'prenom' => $utilisateur->getPrenom(),
+                'nom' => $utilisateur->getNom(),
+                'email' => $utilisateur->getEmail(),
+                'telephone' => $utilisateur->getTelephone(),
+                'avatar' => $utilisateur->getAvatar()
             ],
             'specialisations' => $guide->getSpecialisations(),
             'languesParlees' => $guide->getLanguesParlees(),

@@ -52,7 +52,7 @@ const Navigation = () => {
                   />
                 </svg>
               </button>
-            <Button variant="ghost" className="nav-link" onClick={() => window.location.href = '/dashboard'}>
+            <Button variant="ghost" className="nav-link" onClick={() => window.location.href = '/connexion'}>
               Connexion
             </Button>
             <Button className="hero-button" onClick={() => window.location.href = '/inscription'}>
@@ -100,7 +100,7 @@ const Navigation = () => {
   />
               </svg>
             </button>
-              <Button variant="ghost" className="w-full" onClick={() => window.location.href = '/dashboard'}>Connexion</Button>
+              <Button variant="ghost" className="w-full" onClick={() => window.location.href = '/connexion'}>Connexion</Button>
               <Button className="w-full hero-button" onClick={() => window.location.href = '/inscription'}>S'inscrire</Button>
             </div>
           </div>

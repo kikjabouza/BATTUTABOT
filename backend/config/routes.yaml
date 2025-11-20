@@ -6,7 +6,7 @@ api_touriste:
     prefix: /api
     type: attribute
 
-# 2. ROUTES API - SECURITY  
+# 2. ROUTES API - SECURITY
 api_security:
     resource: ../src/Controller/Security/
     prefix: /api
@@ -14,12 +14,12 @@ api_security:
 
 # 3. ROUTES API - CONTROLLERS RACINE (Questionnaire, User)
 api_questionnaire:
-    resource: ../src/Controller/QuestionnaireController.php
+    resource: ../src/Controller/Security/QuestionnaireController.php
     prefix: /api
     type: attribute
 
 api_user:
-    resource: ../src/Controller/UserController.php
+    resource: ../src/Controller/Security/UserController.php
     prefix: /api
     type: attribute
 
@@ -30,7 +30,7 @@ app:
         namespace: App\Controller
     type: attribute
     exclude:
-        - '../src/Controller/API/'
-        - '../src/Controller/Security/'
-        - '../src/Controller/QuestionnaireController.php'
-        - '../src/Controller/UserController.php'
+        - "../src/Controller/API/"
+        - "../src/Controller/Security/"
+        - "../src/Controller/Security/QuestionnaireController.php"
+        - "../src/Controller/Security/UserController.php"

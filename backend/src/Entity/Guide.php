@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\GuideRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: GuideRepository::class)]
 class Guide
@@ -46,6 +47,7 @@ class Guide
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     #[ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'id', nullable: false)]
+    #[Ignore] // ⭐ AJOUTEZ CETTE LIGNE
     private ?Utilisateur $utilisateur = null;
 
     public function getId(): ?int

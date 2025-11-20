@@ -73,7 +73,17 @@ final class UserController extends AbstractController
     #[Route('/api/choisir-profil', name: 'api_choisir_profil', methods: ['POST'])]
     public function choisirProfil(Request $request, EntityManagerInterface $em): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        // ⭐ UTILISEZ cette méthode pour éviter la désérialisation automatique
+        $content = $request->getContent();
+        $data = json_decode($content, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $this->json([
+                'success' => false,
+                'error' => 'JSON invalide'
+            ], 400);
+        }
+
         $profilType = $data['profilType'] ?? null;
         $userId = $data['userId'] ?? null;
 
@@ -92,7 +102,6 @@ final class UserController extends AbstractController
             ], 404);
         }
 
-        // Vérifier si l'utilisateur a déjà ce profil
         if ($this->utilisateurADejaProfil($user, $profilType)) {
             return $this->json([
                 'success' => false,
@@ -100,9 +109,8 @@ final class UserController extends AbstractController
             ], 400);
         }
 
-        // Créer le profil correspondant
         try {
-            switch($profilType) {
+            switch ($profilType) {
                 case 'touriste':
                     $profil = new ProfilTouriste();
                     $profil->setIdUtilisateur($user);
@@ -117,12 +125,15 @@ final class UserController extends AbstractController
                     $profil->setDescription($data['description'] ?? '');
                     $profil->setProduits($data['produits'] ?? '');
                     $profil->setPrixVisite($data['prixVisite'] ?? 0);
+                    $profil->setPratiquesEco($data['pratiquesEco'] ?? '');
+                    $profil->setLabelEco($data['labelEco'] ?? false);
                     $em->persist($profil);
                     break;
 
                 case 'guide':
+                    // ⭐ CRÉEZ le guide MANUELLEMENT sans désérialisation
                     $profil = new Guide();
-                    $profil->setIdUtilisateur($user);
+                    $profil->setUtilisateur($user);
                     $profil->setSpecialisations($data['specialisations'] ?? '');
                     $profil->setLanguesParlees($data['languesParlees'] ?? '');
                     $profil->setExperienceAnnees($data['experienceAnnees'] ?? 0);
@@ -142,15 +153,16 @@ final class UserController extends AbstractController
 
             return $this->json([
                 'success' => true,
-                'message' => 'Profil '.$profilType.' créé avec succès',
+                'message' => 'Profil ' . $profilType . ' créé avec succès',
                 'profil_id' => $profil->getId(),
                 'profil_type' => $profilType
             ]);
-
         } catch (\Exception $e) {
+            // ⭐ AFFICHEZ l'erreur réelle pour debugger
+            error_log("❌ Erreur création profil: " . $e->getMessage());
             return $this->json([
                 'success' => false,
-                'error' => 'Erreur lors de la création du profil: '.$e->getMessage()
+                'error' => 'Erreur lors de la création du profil: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -159,7 +171,7 @@ final class UserController extends AbstractController
     public function showUtilisateur(int $id): JsonResponse
     {
         $user = $this->utilisateurRepository->find($id);
-        
+
         if (!$user) {
             return $this->json([
                 'success' => false,
@@ -177,7 +189,7 @@ final class UserController extends AbstractController
     public function getProfilsUtilisateur(int $id): JsonResponse
     {
         $user = $this->utilisateurRepository->find($id);
-        
+
         if (!$user) {
             return $this->json([
                 'success' => false,
@@ -198,7 +210,7 @@ final class UserController extends AbstractController
             $profils[] = ['type' => 'artisan', 'id' => $artisan->getId()];
         }
 
-        $guide = $this->guideRepository->findOneBy(['idUtilisateur' => $user]);
+        $guide = $this->guideRepository->findOneBy(['utilisateur' => $user]); // ⭐ CORRECTION
         if ($guide) {
             $profils[] = ['type' => 'guide', 'id' => $guide->getId()];
         }
@@ -219,7 +231,7 @@ final class UserController extends AbstractController
     public function updateUtilisateur(int $id, Request $request, EntityManagerInterface $em): JsonResponse
     {
         $user = $this->utilisateurRepository->find($id);
-        
+
         if (!$user) {
             return $this->json([
                 'success' => false,
@@ -268,15 +280,19 @@ final class UserController extends AbstractController
     /**
      * Vérifie si l'utilisateur a déjà un profil de ce type
      */
+    /**
+     * Vérifie si l'utilisateur a déjà un profil de ce type
+     */
     private function utilisateurADejaProfil(Utilisateur $user, string $profilType): bool
     {
-        switch($profilType) {
+        switch ($profilType) {
             case 'touriste':
                 return $this->profilTouristeRepository->findOneBy(['idUtilisateur' => $user]) !== null;
             case 'artisan':
                 return $this->artisanRepository->findOneBy(['idUtilisateur' => $user]) !== null;
             case 'guide':
-                return $this->guideRepository->findOneBy(['idUtilisateur' => $user]) !== null;
+                // ⭐ CORRECTION : Utilisez 'utilisateur' au lieu de 'idUtilisateur'
+                return $this->guideRepository->findOneBy(['utilisateur' => $user]) !== null;
             default:
                 return false;
         }

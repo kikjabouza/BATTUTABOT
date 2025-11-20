@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Inscription from "./pages/Inscription";
-import DashboardTouriste from "./pages/DashboardTouriste";
+import Dashboard from "./pages/Dashboard";
 import PlanVoyage from "./pages/PlanVoyage";
 import Accompagnant from "./pages/Accompagnant";
 import Communaute from "./pages/Communaute";
@@ -17,6 +17,10 @@ import Ecodefis from "./pages/Ecodefis";
 import Urgence from "./pages/Urgence";
 import CultureId from "./pages/CultureId";
 import QuiseRegistration from "./pages/QuiseRegistration";
+import Connexion from "./pages/Connexion";
+import ArtisanRegistration from "./pages/ArtisanRegistration";
+import GuideRegistration from "./pages/GuideRegistration";
+import Logout from "./pages/Logout";
 
 const queryClient = new QueryClient();
 
@@ -29,7 +33,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/inscription" element={<Inscription />} />
-          <Route path="/dashboard" element={<DashboardTouriste />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/plan-voyage" element={<PlanVoyage />} />
           <Route path="/accompagnant" element={<Accompagnant />} />
           <Route path="/communaute" element={<Communaute />} />
@@ -40,6 +44,11 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/urgence" element={<Urgence />} />
           <Route path="/quise-registration" element={<QuiseRegistration />} />
+          <Route path="/connexion" element={<Connexion />} />
+          <Route path="/artisan-registration" element={<ArtisanRegistration />} />
+          <Route path="/guide-registration" element={<GuideRegistration />} />
+          <Route path="/guide-registration" element={<GuideRegistration />} />
+          <Route path="/logout" element={<Logout />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
