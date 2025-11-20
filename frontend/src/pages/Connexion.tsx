@@ -7,7 +7,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { ArrowRight, Sparkles, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from '@/contexts/AuthContext'; 
 
 const Connexion = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +16,7 @@ const Connexion = () => {
     password: "",
   });
   
-  const { login, isLoading, error, clearError } = useAuth();
+  const { login, isLoading, error, clearError } = useAuthContext();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   

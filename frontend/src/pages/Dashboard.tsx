@@ -7,6 +7,8 @@ import NavProprietaire from "@/components/NavProprietaire";
 import NavGuide from "@/components/NavGuide";
 import Footer from "@/components/Footer";
 import { useState, useEffect } from "react";
+import { useAuthContext } from '@/contexts/AuthContext'; 
+
 
 import { 
   MapPin, 
@@ -23,10 +25,9 @@ import {
   Star,
   TrendingUp
 } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   // ⭐ AJOUTEZ CE LOG pour vérifier
   console.log('👤 User dans Dashboard:', user);
   console.log('🎯 Rôle détecté:', user?.role);
@@ -56,7 +57,7 @@ const Dashboard = () => {
 // Dashboard Touriste
 // DashboardTouriste.tsx
 const DashboardTouriste = () => {
-  const { user } = useAuth();
+  const { user } =  useAuthContext();
   const [defisRealises, setDefisRealises] = useState([]);
   const [groupes, setGroupes] = useState([]);
   const [points, setPoints] = useState(0);
@@ -161,7 +162,7 @@ const DashboardTouriste = () => {
 // Dashboard Artisan
 // DashboardArtisan.tsx
 const DashboardArtisan = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const [artisanProfile, setArtisanProfile] = useState(null);
   const [allArtisans, setAllArtisans] = useState([]);
 
@@ -258,7 +259,7 @@ const DashboardArtisan = () => {
 // Dashboard Guide
 // DashboardGuide.tsx - Version complète
 const DashboardGuide = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const [guideProfile, setGuideProfile] = useState(null);
   const [allGuides, setAllGuides] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -370,7 +371,7 @@ const DashboardGuide = () => {
 // Dashboard Propriétaire
 // DashboardProprietaire.tsx
 const DashboardProprietaire = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const [myHebergements, setMyHebergements] = useState([]);
   const [allHebergements, setAllHebergements] = useState([]);
 

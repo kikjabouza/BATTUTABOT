@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { ArrowRight, ArrowLeft, Sparkles, Languages, Clock, AlertCircle } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from '@/contexts/AuthContext'; 
 import { useNavigate } from "react-router-dom";
 
 const GuideRegistration = () => {
@@ -21,7 +21,7 @@ const GuideRegistration = () => {
     accessibiliteHandicap: false
   });
 
-  const { user, createProfile, isLoading, error, clearError } = useAuth();
+  const { user, createProfile, isLoading, error, clearError } = useAuthContext();
   const navigate = useNavigate();
 
   const languages = ["Français", "Anglais", "Arabe", "Espagnol", "Allemand", "Italien", "Japonais"];

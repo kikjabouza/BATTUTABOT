@@ -90,6 +90,7 @@ const NavCnx = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 space-y-4 border-t border-border animate-fade-in">
             <a href="/" className="block py-2 nav-link">Accueil</a>
+            <a href="/culture" className="block py-2 nav-link">Culture</a>
             <a href="/services" className="block py-2 nav-link">Services</a>
             <a href="/ecodefis" className="block py-2 nav-link" style={{color: "green"}}>ÉcoDéfis</a>
             <a href="/communaute" className="block py-2 nav-link">Communauté</a>

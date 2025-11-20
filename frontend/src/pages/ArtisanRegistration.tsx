@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { ArrowRight, ArrowLeft, Sparkles, MapPin, Euro, AlertCircle } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from '@/contexts/AuthContext'; 
 import { useNavigate } from "react-router-dom";
 
 const ArtisanRegistration = () => {
@@ -21,7 +21,7 @@ const ArtisanRegistration = () => {
     labelEco: false
   });
 
-  const { user, createProfile, isLoading, error, clearError } = useAuth();
+  const { user, createProfile, isLoading, error, clearError } = useAuthContext();
   const navigate = useNavigate();
 
   const artisanatTypes = [

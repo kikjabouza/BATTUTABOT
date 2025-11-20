@@ -279,20 +279,7 @@ const ChatBot = () => {
                 </svg>
               </button>
               
-              {/* NOUVEAU : Bouton Assistant IA de voyage */}
-              <button 
-                onClick={() => window.open('/plan-voyage', '_blank')}
-                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white/20 transition-colors group"
-                title="Assistant de voyage IA - Planifiez votre séjour"
-              >
-                <div className="relative">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#3B82F6">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 1.66.67 3.16 1.75 4.25L6 14l2 2 1.25-1.25C10.84 16.33 12.34 17 14 17c3.87 0 7-3.13 7-7s-3.13-7-7-7z"/>
-                  </svg>
-                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full animate-pulse border border-white"></div>
-                </div>
-                <span className="text-xs text-white font-medium">IA Voyage</span>
-              </button>
+              
               
               {/* Bouton pour reset la conversation (affiché seulement s'il y a des messages) */}
               {messages.length > 0 && (

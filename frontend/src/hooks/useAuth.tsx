@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // ⭐ AJOUTEZ useEffect
 import { apiService, User, RegisterData, LoginData, ProfileData } from '@/services/api';
 
 interface UseAuthReturn {
@@ -13,10 +13,25 @@ interface UseAuthReturn {
 }
 
 export const useAuth = (): UseAuthReturn => {
-  const [user, setUser] = useState<User | null>(null);
+  // ⭐ MODIFIEZ cette ligne pour charger depuis localStorage
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('auth_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+  
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // ⭐ AJOUTEZ cet useEffect pour la persistence
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('auth_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('auth_user');
+    }
+  }, [user]);
+
+  // ⭐ TOUT LE RESTE EST IDENTIQUE À VOTRE CODE
   const register = async (data: RegisterData): Promise<{success: boolean; user?: User; _sessionIssue?: boolean}> => {
     setIsLoading(true);
     setError(null);
@@ -24,16 +39,13 @@ export const useAuth = (): UseAuthReturn => {
     try {
       console.log('🎯 Début de l\'inscription...', data.email);
       
-      // 1. Inscription
       const registerResult = await apiService.register(data);
       
       if (registerResult.success && registerResult.user) {
         console.log('✅ Inscription réussie, tentative de connexion automatique...');
         
-        // ⭐ SOLUTION : Plus long délai pour laisser le temps à la session de se créer
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // 2. Connexion automatique avec les mêmes identifiants
         const loginResult = await apiService.login({
           email: data.email,
           password: data.password
@@ -45,10 +57,8 @@ export const useAuth = (): UseAuthReturn => {
           console.log('✅ Connexion automatique réussie', loginResult.user);
           setUser(loginResult.user);
           
-          // ⭐ SOLUTION : Attendre un peu plus pour que la session soit stable
           await new Promise(resolve => setTimeout(resolve, 200));
           
-          // VÉRIFICATION : Tester si on est vraiment connecté
           const meResult = await apiService.getCurrentUser();
           console.log('🔍 Vérification connexion (/api/auth/me):', meResult);
           
@@ -57,17 +67,14 @@ export const useAuth = (): UseAuthReturn => {
             return { success: true, user: meResult.user };
           } else {
             console.log('⚠️ Problème: connexion OK mais /me échoue - Session non créée');
-            // ⭐ STRATÉGIE DE CONTOURNEMENT : On retourne l'user mais on sait qu'il n'est pas connecté
             return { 
               success: true, 
               user: loginResult.user,
-              // ⭐ On ajoute un flag pour indiquer que la session a échoué
               _sessionIssue: true 
             };
           }
         } else {
           console.log('❌ Connexion automatique échouée:', loginResult.error);
-          // Retourner l'user créé même si la connexion a échoué
           return { success: true, user: registerResult.user };
         }
       } else {
@@ -92,36 +99,29 @@ export const useAuth = (): UseAuthReturn => {
     try {
       console.log('🎯 Création du profil...', data);
       
-      // ⭐ VÉRIFICATION : D'abord vérifier si on est connecté
       console.log('🔐 Vérification connexion avant createProfile...');
       const meResult = await apiService.getCurrentUser();
       console.log('📊 Statut connexion (/api/auth/me):', meResult);
       
       if (!meResult.success) {
-  console.log('❌ Utilisateur non connecté pour createProfile');
-  console.log('💡 Stratégie: Stocker les données temporairement et rediriger vers la connexion');
-  
-  // Sauvegarder les données temporairement
-  const tempProfileData = {
-    ...data,
-    timestamp: Date.now()
-  };
-  localStorage.setItem('temp_profile_data', JSON.stringify(tempProfileData));
-  
-  // ⭐ REDIRECTION VERS LA BONNE ROUTE
-  setTimeout(() => {
-    window.location.href = '/connexion?message=profile_creation&redirect=quise-registration';
-  }, 1000);
-  
-  return false;
-}
+        console.log('❌ Utilisateur non connecté pour createProfile');
+        const tempProfileData = {
+          ...data,
+          timestamp: Date.now()
+        };
+        localStorage.setItem('temp_profile_data', JSON.stringify(tempProfileData));
+        
+        setTimeout(() => {
+          window.location.href = '/connexion?message=profile_creation&redirect=quise-registration';
+        }, 1000);
+        
+        return false;
+      }
       
-      // Si on est connecté, créer le profil normalement
       const result = await apiService.createProfile(data);
       
       if (result.success) {
         console.log('✅ Profil créé avec succès');
-        // Nettoyer les données temporaires si elles existent
         localStorage.removeItem('temp_profile_data');
         return true;
       } else {
@@ -151,7 +151,6 @@ export const useAuth = (): UseAuthReturn => {
       if (result.success && result.user) {
         console.log('✅ Connexion réussie', result.user);
         
-        // ⭐ VÉRIFICATION : Vérifier que la session est bien active
         await new Promise(resolve => setTimeout(resolve, 300));
         const meResult = await apiService.getCurrentUser();
         
@@ -159,7 +158,6 @@ export const useAuth = (): UseAuthReturn => {
           console.log('🎉 Session confirmée active');
           setUser(meResult.user);
           
-          // ⭐ BONUS : Vérifier s'il y a des données de profil temporaires à traiter
           const tempProfileData = localStorage.getItem('temp_profile_data');
           if (tempProfileData) {
             console.log('📝 Données de profil temporaires détectées, traitement...');
@@ -189,29 +187,26 @@ export const useAuth = (): UseAuthReturn => {
     }
   };
 
-  // Dans useAuth.ts - modifier la méthode logout
-const logout = async (): Promise<void> => {
-  setIsLoading(true);
-  try {
-    console.log('🎯 Déconnexion...');
-    await apiService.logout();
-    setUser(null);
-    
-    // ⭐ NETTOYAGE COMPLET
-    localStorage.removeItem('temp_profile_data');
-    localStorage.removeItem('temp_questionnaire_responses');
-    localStorage.removeItem('temp_user_id');
-    
-    console.log('✅ Déconnexion réussie');
-  } catch (err) {
-    console.error('❌ Erreur déconnexion:', err);
-    // Déconnexion locale même si l'API échoue
-    setUser(null);
-    localStorage.clear();
-  } finally {
-    setIsLoading(false);
-  }
-};
+  const logout = async (): Promise<void> => {
+    setIsLoading(true);
+    try {
+      console.log('🎯 Déconnexion...');
+      await apiService.logout();
+      setUser(null);
+      
+      localStorage.removeItem('temp_profile_data');
+      localStorage.removeItem('temp_questionnaire_responses');
+      localStorage.removeItem('temp_user_id');
+      
+      console.log('✅ Déconnexion réussie');
+    } catch (err) {
+      console.error('❌ Erreur déconnexion:', err);
+      setUser(null);
+      localStorage.clear();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const clearError = (): void => {
     setError(null);

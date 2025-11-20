@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { ArrowRight, ArrowLeft, Sparkles, AlertCircle, Calendar, Phone, Globe } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from '@/contexts/AuthContext'; 
 import { useNavigate } from "react-router-dom";
 
 const Inscription = () => {
@@ -26,7 +26,7 @@ const Inscription = () => {
     preferences: [] as string[],
   });
 
-  const { register, createProfile, isLoading, error: authError, clearError: clearAuthError } = useAuth();
+  const { register, createProfile, isLoading, error: authError, clearError: clearAuthError } =  useAuthContext();
   const navigate = useNavigate();
 
   const [error, setError] = useState<string | null>(null);

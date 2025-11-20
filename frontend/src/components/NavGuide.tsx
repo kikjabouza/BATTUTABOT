@@ -22,7 +22,6 @@ const NavGuide  = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             <a href="/dashboard" className="nav-link">Home</a>
-            <a href="/profil" className="nav-link">Profil</a>
             <a href="/about" className="nav-link">About</a>
             <a href="/culture" className="nav-link">Culture</a>
             <a href="/services" className="nav-link">Services</a>
@@ -50,14 +49,13 @@ const NavGuide  = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 space-y-4 border-t border-border animate-fade-in">
-            <a href="/dashboard" className="nav-link">Home</a>
-            <a href="/profil" className="nav-link">Profil</a>
-            <a href="/about" className="nav-link">About</a>
-            <a href="/culture" className="nav-link">Culture</a>
-            <a href="/services" className="nav-link">Services</a>
-            <a href="/events" className="nav-link">Events</a>
-            <a href="/contact" className="nav-link">Contact</a>
-            <a href="/urgence" className="nav-link" style={{color: "red"}}>Urgence</a>
+            <a href="/dashboard" className="block py-2 nav-link">Home</a>
+            <a href="/about" className="block py-2 nav-link">About</a>
+            <a href="/culture" className="block py-2 nav-link">Culture</a>
+            <a href="/services" className="block py-2 nav-link">Services</a>
+            <a href="/events" className="block py-2 nav-link">Events</a>
+            <a href="/contact" className="block py-2 nav-link">Contact</a>
+            <a href="/urgence" className="block py-2 nav-link" style={{color: "red"}}>Urgence</a>
             <div className="flex flex-col gap-2 pt-4">
               <Button variant="ghost" className="w-full" onClick={() => window.location.href = '/logout'}>Déconnexion</Button>
             </div>

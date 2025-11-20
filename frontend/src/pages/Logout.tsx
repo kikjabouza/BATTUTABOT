@@ -1,10 +1,10 @@
 // src/components/Logout.tsx
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthContext } from '@/contexts/AuthContext'; 
 
 const Logout = () => {
-  const { logout } = useAuth();
+  const { logout } = useAuthContext();
   const navigate = useNavigate();
 
   useEffect(() => {

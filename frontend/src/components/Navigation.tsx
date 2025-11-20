@@ -23,6 +23,7 @@ const Navigation = () => {
           <div className="hidden md:flex items-center gap-8">
             <a href="/" className="nav-link">Accueil</a>
             <a href="/culture" className="nav-link">Culture</a>
+            <a href="/services" className="nav-link">Services</a>
             <a href="/ecodefis" className="nav-link" style={{color: "green"}}>ÉcoDéfis</a>
             <a href="/about" className="nav-link">À propos</a>
             <a href="/contact" className="nav-link">Contact</a>
@@ -74,6 +75,7 @@ const Navigation = () => {
           <div className="md:hidden py-4 space-y-4 border-t border-border animate-fade-in">
             <a href="/" className="block py-2 nav-link">Accueil</a>
             <a href="/culture" className="block py-2 nav-link">Culture</a>
+            <a href="/services" className="block py-2 nav-link">Services</a>
             <a href="/ecodefis" className="block py-2 nav-link" style={{color: "green"}}>ÉcoDéfis</a>
             <a href="/about" className="block py-2 nav-link">À propos</a>
             <a href="/contact" className="block py-2 nav-link">Contact</a>
