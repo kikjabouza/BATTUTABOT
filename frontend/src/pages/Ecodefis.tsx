@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import NavigationRouter from "@/components/NavigationRouter";
 import { 
   Leaf, 
   Trophy, 
@@ -16,103 +17,226 @@ import {
   Camera,
   Lock,
   CheckCircle2,
-  Clock
+  Clock,
+  Upload,
+  X,
+  LucideIcon
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+
+// Types pour les défis et réalisations
+type DefiEco = {
+  id: number;
+  titre: string;
+  description: string;
+  typeDefi: string;
+  pointsRecompense: number;
+  valeurCible: number;
+  unite: string;
+  nomBadge: string;
+  iconeBadge: string | null;
+  estActif: boolean;
+};
+
+type RealisationDefi = {
+  id: number;
+  progresValeur: number;
+  estTermine: boolean;
+  dateTerminaison: string | null;
+  pointsGagnes: number;
+  idUtilisateur: number | null;
+  idDefi: number | null;
+  defi?: DefiEco;
+};
+
+// Type pour le mapping des icônes
+type IconMapType = {
+  [key: string]: LucideIcon;
+};
 
 const Ecodefis = () => {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+  const isAuthenticated = !!user;
   
-  // Simuler l'état de connexion - À remplacer par votre système d'auth réel
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [defis, setDefis] = useState<DefiEco[]>([]);
+  const [mesRealisations, setMesRealisations] = useState<RealisationDefi[]>([]);
+  const [loading, setLoading] = useState(true);
   const [userPoints, setUserPoints] = useState(0);
-  
-  // Exemple de défis
-  const defis = [
-    {
-      id: 1,
-      titre: "Course Matinale",
-      description: "Courir 15 minutes par jour pendant 7 jours",
-      type: "sport",
-      points: 50,
-      valeurCible: 7,
-      unite: "jours",
-      badge: "Runner Éco",
-      icon: Footprints,
-      estActif: true
-    },
-    {
-      id: 2,
-      titre: "Transport Vert",
-      description: "Utiliser vélo ou transport en commun au lieu de la voiture",
-      type: "transport",
-      points: 30,
-      valeurCible: 5,
-      unite: "trajets",
-      badge: "Cycliste Urbain",
-      icon: Bike,
-      estActif: true
-    },
-    {
-      id: 3,
-      titre: "Ramassage de Déchets",
-      description: "Ramasser et jeter correctement 10 déchets",
-      type: "environnement",
-      points: 40,
-      valeurCible: 10,
-      unite: "déchets",
-      badge: "Gardien Nature",
-      icon: Trash2,
-      estActif: true
-    },
-    {
-      id: 4,
-      titre: "Clean Up Day",
-      description: "Participer à un événement de nettoyage communautaire",
-      type: "communauté",
-      points: 100,
-      valeurCible: 1,
-      unite: "événement",
-      badge: "Héros Éco",
-      icon: Users,
-      estActif: true
-    }
-  ];
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDefi, setSelectedDefi] = useState<DefiEco | null>(null);
+  const [preuveText, setPreuveText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  // Exemple de réalisations pour utilisateur connecté
-  const mesRealisations = [
-    {
-      id: 1,
-      defi: defis[0],
-      progres: 4,
-      estTermine: false,
-      pointsGagnes: 0
-    },
-    {
-      id: 2,
-      defi: defis[2],
-      progres: 10,
-      estTermine: true,
-      pointsGagnes: 40
-    }
-  ];
+  // Icons mapping avec typage strict
+  const iconMap: IconMapType = {
+    'sport': Footprints,
+    'transport': Bike,
+    'environnement': Trash2,
+    'communauté': Users,
+    'default': Target
+  };
 
-  const handleDefiAction = (defiId: number) => {
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchDefis();
+      fetchMesRealisations();
+    } else {
+      fetchDefis();
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  const fetchDefis = async (): Promise<void> => {
+    try {
+      const response = await fetch('/api/defis');
+      if (!response.ok) throw new Error('Erreur lors du chargement des défis');
+      const data = await response.json();
+      setDefis(data.data || []);
+    } catch (error) {
+      console.error('Erreur:', error);
+      setDefis([]);
+    }
+  };
+
+  const fetchMesRealisations = async (): Promise<void> => {
+    if (!user) return;
+    
+    try {
+      const response = await fetch('/api/realisations-defis');
+      if (!response.ok) throw new Error('Erreur lors du chargement des réalisations');
+      const realisations: RealisationDefi[] = await response.json();
+      
+      // Filtrer les réalisations de l'utilisateur connecté
+      const mesRealisations = realisations.filter((r: RealisationDefi) => 
+        r.idUtilisateur === user.id
+      );
+      
+      // Récupérer les détails des défis pour chaque réalisation
+      const realisationsAvecDefis = await Promise.all(
+        mesRealisations.map(async (realisation: RealisationDefi) => {
+          if (realisation.idDefi) {
+            try {
+              const defiResponse = await fetch(`/api/defis/${realisation.idDefi}`);
+              if (defiResponse.ok) {
+                const defiData = await defiResponse.json();
+                return { ...realisation, defi: defiData.data };
+              }
+            } catch (error) {
+              console.error('Erreur chargement défi:', error);
+            }
+          }
+          return realisation;
+        })
+      );
+      
+      setMesRealisations(realisationsAvecDefis);
+      calculerPointsUtilisateur(realisationsAvecDefis);
+    } catch (error) {
+      console.error('Erreur:', error);
+      setMesRealisations([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculerPointsUtilisateur = (realisations: RealisationDefi[]): void => {
+    const totalPoints = realisations
+      .filter(r => r.estTermine)
+      .reduce((sum, r) => sum + r.pointsGagnes, 0);
+    setUserPoints(totalPoints);
+  };
+
+  const handleDefiAction = (defi: DefiEco): void => {
     if (!isAuthenticated) {
       navigate("/inscription");
     } else {
-      // Ouvrir modal de soumission de justification
-      console.log("Ouvrir modal pour défi", defiId);
+      setSelectedDefi(defi);
+      setPreuveText("");
+      setModalOpen(true);
     }
+  };
+
+  const soumettreRealisation = async (): Promise<void> => {
+    if (!selectedDefi || !user) return;
+    
+    setSubmitting(true);
+    try {
+      // Pour l'instant, on considère que l'utilisateur complète 1 unité du défi
+      const progresValeur = 1;
+      const estTermine = progresValeur >= selectedDefi.valeurCible;
+      const pointsGagnes = estTermine ? selectedDefi.pointsRecompense : 0;
+
+      const realisationData = {
+        progresValeur,
+        estTermine,
+        pointsGagnes,
+        idUtilisateur: user.id,
+        idDefi: selectedDefi.id,
+        dateTerminaison: estTermine ? new Date().toISOString() : null
+      };
+
+      const response = await fetch('/api/realisations-defis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(realisationData),
+      });
+
+      if (!response.ok) throw new Error('Erreur lors de la soumission');
+
+      // Mettre à jour l'interface
+      await fetchMesRealisations();
+      setModalOpen(false);
+      setSelectedDefi(null);
+      setPreuveText("");
+
+      // Afficher un message de succès
+      alert(estTermine ? 
+        `Félicitations ! Vous avez terminé le défi "${selectedDefi.titre}" et gagné ${pointsGagnes} points !` :
+        `Progression enregistrée pour le défi "${selectedDefi.titre}" !`
+      );
+
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Erreur lors de la soumission. Veuillez réessayer.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const getDefiIcon = (typeDefi: string): JSX.Element => {
+    const typeDefiLower = typeDefi.toLowerCase();
+    const IconComponent = iconMap[typeDefiLower] || iconMap.default;
+    return <IconComponent className="w-8 h-8 text-primary" />;
   };
 
   const pointsRequis = 500;
   const progressPercentage = (userPoints / pointsRequis) * 100;
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[url('assets/bg_vers_zlij.png')] bg-center bg-repeat-y">
+        <NavigationRouter />
+        <main className="pt-32 pb-20 px-4">
+          <div className="container mx-auto max-w-7xl text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Chargement des défis...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[url('assets/bg_vers_zlij.png')] bg-center bg-repeat-y">
-      <Navigation />
+      <NavigationRouter />
       
       <main className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-7xl space-y-12">
@@ -147,7 +271,7 @@ const Ecodefis = () => {
                 {[
                   { num: "1", title: "Inscrivez-vous", desc: "Créez votre compte et commencez à 0 points" },
                   { num: "2", title: "Relevez des défis", desc: "Choisissez parmi nos défis écologiques" },
-                  { num: "3", title: "Validez vos actions", desc: "Envoyez une photo ou message de preuve" },
+                  { num: "3", title: "Validez vos actions", desc: "Envoyez une preuve de votre réalisation" },
                   { num: "4", title: "Gagnez votre voyage", desc: "Atteignez 500 points pour un voyage gratuit !" }
                 ].map((step, i) => (
                   <div key={i} className="text-center space-y-2">
@@ -216,8 +340,8 @@ const Ecodefis = () => {
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
                         <span className="flex items-center gap-2">
-                          <realisation.defi.icon className="w-5 h-5 text-primary" />
-                          {realisation.defi.titre}
+                          {realisation.defi && getDefiIcon(realisation.defi.typeDefi)}
+                          {realisation.defi?.titre || `Défi #${realisation.idDefi}`}
                         </span>
                         {realisation.estTermine && (
                           <Badge className="bg-green-500 text-white">
@@ -226,24 +350,26 @@ const Ecodefis = () => {
                           </Badge>
                         )}
                       </CardTitle>
-                      <CardDescription>{realisation.defi.description}</CardDescription>
+                      <CardDescription>
+                        {realisation.defi?.description || "Description non disponible"}
+                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Progression</span>
                           <span className="font-medium text-foreground">
-                            {realisation.progres} / {realisation.defi.valeurCible} {realisation.defi.unite}
+                            {realisation.progresValeur} / {realisation.defi?.valeurCible || 1} {realisation.defi?.unite || "unité"}
                           </span>
                         </div>
                         <Progress 
-                          value={(realisation.progres / realisation.defi.valeurCible) * 100} 
+                          value={(realisation.progresValeur / (realisation.defi?.valeurCible || 1)) * 100} 
                           className="h-2"
                         />
                       </div>
-                      {!realisation.estTermine && (
+                      {!realisation.estTermine && realisation.defi && (
                         <Button 
-                          onClick={() => handleDefiAction(realisation.defi.id)} 
+                          onClick={() => handleDefiAction(realisation.defi!)} 
                           className="w-full hero-button"
                         >
                           <Camera className="w-4 h-4 mr-2" />
@@ -270,19 +396,19 @@ const Ecodefis = () => {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {defis.map((defi) => (
+              {defis.filter(defi => defi.estActif).map((defi) => (
                 <Card 
                   key={defi.id} 
                   className="culture-card group hover:shadow-lg transition-all duration-300"
                 >
                   <CardHeader>
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <defi.icon className="w-8 h-8 text-primary" />
+                      {getDefiIcon(defi.typeDefi)}
                     </div>
                     <CardTitle className="flex items-center justify-between">
                       <span>{defi.titre}</span>
                       <Badge variant="secondary" className="text-primary font-bold">
-                        +{defi.points} pts
+                        +{defi.pointsRecompense} pts
                       </Badge>
                     </CardTitle>
                     <CardDescription>{defi.description}</CardDescription>
@@ -294,10 +420,10 @@ const Ecodefis = () => {
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Award className="w-4 h-4" />
-                      <span>Badge: {defi.badge}</span>
+                      <span>Badge: {defi.nomBadge}</span>
                     </div>
                     <Button 
-                      onClick={() => handleDefiAction(defi.id)}
+                      onClick={() => handleDefiAction(defi)}
                       className="w-full hero-button-outline group-hover:bg-primary/10"
                     >
                       {isAuthenticated ? (
@@ -352,6 +478,82 @@ const Ecodefis = () => {
 
         </div>
       </main>
+
+      {/* Modal de soumission de preuve */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Upload className="w-5 h-5 text-primary" />
+              Soumettre une preuve
+            </DialogTitle>
+            <DialogDescription>
+              Partagez votre réalisation pour le défi "{selectedDefi?.titre}"
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Description de votre réalisation (optionnel)
+              </label>
+              <Textarea
+                placeholder="Décrivez comment vous avez réalisé ce défi..."
+                value={preuveText}
+                onChange={(e) => setPreuveText(e.target.value)}
+                rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Preuve visuelle (optionnel)
+              </label>
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                <Camera className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">
+                  Cliquez pour télécharger une photo ou glissez-déposez
+                </p>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*"
+                  // Pour l'instant, on ne traite pas les fichiers
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setModalOpen(false)}
+                className="flex-1"
+                disabled={submitting}
+              >
+                <X className="w-4 h-4 mr-2" />
+                Annuler
+              </Button>
+              <Button
+                onClick={soumettreRealisation}
+                className="flex-1 hero-button"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Envoi...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Soumettre
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

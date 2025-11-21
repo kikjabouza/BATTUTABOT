@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import NavigationRouter from "@/components/NavigationRouter";
 import { 
   Phone, 
   AlertCircle, 
@@ -120,7 +121,7 @@ const Urgence = () => {
 
   return (
     <div className="min-h-screen bg-[url('assets/background.svg')] bg-center bg-cover bg-fixed bg-no-repeat">
-      <Navigation />
+      <NavigationRouter />
       
       <main className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-7xl space-y-12">

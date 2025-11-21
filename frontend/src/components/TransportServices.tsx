@@ -1,8 +1,18 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Train, Bus, Car, Plane, Ship, MapPin, Navigation, Clock, DollarSign } from "lucide-react";
+import { Train, Bus, Car, Plane, Ship, MapPin, Navigation, Clock, DollarSign, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+// Import des images pour le transport
+import royalAirMaroc from "@/assets/royalair.svg";
+import airArabia from "@/assets/airarabia.png";
+import alboraq from "@/assets/Al_Boraq.png";
+import oncf from "@/assets/logo.png";
+import ctm from "@/assets/Fichier-17@2x-1.png";
+import indrive from "@/assets/logo--white.svg";
+import ferry from "@/assets/Aferry-logo.png";
+import taxi from "@/assets/LOGO (1).png";
 
 const transportCategories = [
   {
@@ -12,12 +22,27 @@ const transportCategories = [
     options: [
       {
         icon: Plane,
-        title: "Vols Domestiques",
-        description: "Voyagez rapidement entre les principales villes du Maroc avec Royal Air Maroc et Air Arabia",
-        features: ["Casablanca - Marrakech", "Rabat - Dakhla", "Tanger - Agadir", "Service à bord"],
+        title: "Royal Air Maroc",
+        description: "Compagnie nationale marocaine - Vols domestiques et internationaux",
+        features: ["Casablanca - Marrakech", "Rabat - Dakhla", "Tanger - Agadir", "Service premium"],
         duration: "1-2h",
+        image: royalAirMaroc,
         priceRange: "500-1500 DH",
-        badge: "Rapide"
+        badge: "National",
+        site: "https://royalairmaroc.com/ma-fr",
+        reservation: "https://www.royalairmaroc.com/ma-fr/reservation/vols/choix-du-vol"
+      },
+      {
+        icon: Plane,
+        title: "Air Arabia",
+        description: "Compagnie low-cost - Vols économiques vers les principales villes",
+        features: ["Casablanca - Marrakech", "Rabat - Laâyoune", "Fès - Agadir", "Tarifs compétitifs"],
+        duration: "1-2h",
+        image: airArabia,
+        priceRange: "300-1200 DH",
+        badge: "Économique",
+        site: "https://www.airarabia.com/fr",
+        reservation: "https://www.airarabia.com/fr/book-flights"
       }
     ]
   },
@@ -32,8 +57,11 @@ const transportCategories = [
         description: "Le train à grande vitesse reliant Casablanca à Tanger en 2h10",
         features: ["320 km/h", "Wi-Fi gratuit", "Prises électriques", "Confort premium"],
         duration: "2h10",
+        image: alboraq,
         priceRange: "150-300 DH",
-        badge: "Moderne"
+        badge: "Moderne",
+        site: "https://www.oncf.ma/fr/Al-Boraq",
+        reservation: "https://www.oncf-voyages.ma/fr"
       },
       {
         icon: Train,
@@ -41,8 +69,11 @@ const transportCategories = [
         description: "Réseau ferroviaire national confortable et ponctuel",
         features: ["1ère et 2ème classe", "Climatisation", "Restaurant", "Ponctualité"],
         duration: "Variable",
+        image: oncf,
         priceRange: "80-250 DH",
-        badge: "Confortable"
+        badge: "Confortable",
+        site: "https://www.oncf.ma",
+        reservation: "https://www.oncf-voyages.ma/fr"
       }
     ]
   },
@@ -57,8 +88,11 @@ const transportCategories = [
         description: "Services de bus premium avec réseau national complet",
         features: ["Sièges inclinables", "Climatisation", "Bagages inclus", "Arrêts fréquents"],
         duration: "Variable",
+        image: ctm,
         priceRange: "50-200 DH",
-        badge: "Économique"
+        badge: "Économique",
+        site: "https://www.ctm.ma",
+        reservation: "https://www.ctm.ma/fr/reservation"
       },
       {
         icon: Car,
@@ -66,46 +100,19 @@ const transportCategories = [
         description: "Explorez le Maroc en toute liberté avec votre véhicule",
         features: ["4x4 & SUV", "Berlines", "GPS inclus", "Assurance complète"],
         duration: "À votre rythme",
+        image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=500",
         priceRange: "300-800 DH/jour",
-        badge: "Liberté"
-      }
-    ]
-  },
-  {
-    id: "maritime",
-    label: "Maritime",
-    icon: Ship,
-    options: [
-      {
-        icon: Ship,
-        title: "Traversées Ferry",
-        description: "Liaisons maritimes Europe-Maroc via les ports modernes",
-        features: ["Tanger Med", "Nador", "Cabines disponibles", "Véhicules acceptés"],
-        duration: "6-8h",
-        priceRange: "500-1500 DH",
-        badge: "International"
-      }
-    ]
-  },
-  {
-    id: "urbain",
-    label: "Urbain",
-    icon: MapPin,
-    options: [
-      {
-        icon: MapPin,
-        title: "Taxis & VTC",
-        description: "Solutions de mobilité urbaine flexibles et accessibles",
-        features: ["Petits taxis (ville)", "Grands taxis (inter-villes)", "Uber & Careem", "Tarifs réglementés"],
-        duration: "Sur demande",
-        priceRange: "10-100 DH",
-        badge: "Pratique"
+        badge: "Liberté",
+        site: "https://www.hertz.com",
+        reservation: "https://www.hertz.com/rentacar/reservation"
       }
     ]
   }
 ];
 
 const TransportServices = () => {
+  const navigate = useNavigate();
+
   return (
     <section id="transport" className="py-24 px-4 bg-muted/30">
       <div className="container mx-auto max-w-7xl">
@@ -123,92 +130,111 @@ const TransportServices = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="aerien" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto gap-2">
-            {transportCategories.map((category) => {
-              const Icon = category.icon;
-              return (
-                <TabsTrigger 
-                  key={category.id} 
-                  value={category.id}
-                  className="flex items-center gap-2"
-                >
-                  <Icon className="w-4 h-4" />
-                  {category.label}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-
-          {transportCategories.map((category) => (
-            <TabsContent key={category.id} value={category.id} className="space-y-6">
-              {category.options.map((transport) => {
-                const Icon = transport.icon;
-                return (
-                  <Card key={transport.title} className="overflow-hidden culture-card">
-                    <div className="grid grid-cols-1 md:grid-cols-3">
-                      <div className="relative h-64 md:h-auto bg-gradient-to-br from-primary/10 to-accent/10">
-                        <div className="absolute inset-0 bg-[url('/assets/background.svg')] bg-cover bg-center opacity-10" />
-                        <div className="absolute top-4 left-4">
-                          <Badge className="bg-primary/90 text-primary-foreground">
-                            {transport.badge}
-                          </Badge>
+        <div className="space-y-8">
+          {transportCategories.map((category) => {
+            const Icon = category.icon;
+            
+            return (
+              <div key={category.id} className="space-y-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <Icon className="w-6 h-6 text-primary" />
+                  <h3 className="text-2xl font-bold text-foreground">{category.label}</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {category.options.map((transport) => {
+                    const TransportIcon = transport.icon;
+                    return (
+                      <Card key={transport.title} className="p-6 space-y-4 hover:border-primary/30 transition-all cursor-pointer group">
+                        <div className="w-full h-48 rounded-lg flex items-center justify-center overflow-hidden relative bg-gradient-to-br from-primary/10 to-accent/10">
+                          <div className="absolute top-2 right-2">
+                            <Badge className="bg-primary/90 text-primary-foreground">
+                              {transport.badge}
+                            </Badge>
+                          </div>
+                          {transport.image ? (
+                            <img 
+                              src={transport.image} 
+                              alt={transport.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <TransportIcon className="w-16 h-16 text-primary/40" />
+                          )}
                         </div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Icon className="w-24 h-24 text-primary/30" />
-                        </div>
-                      </div>
-                      
-                      <div className="md:col-span-2 p-8 space-y-6">
-                        <div className="space-y-2">
-                          <h3 className="text-2xl font-bold text-foreground">
-                            {transport.title}
-                          </h3>
-                          <p className="text-muted-foreground leading-relaxed">
+                        
+                        <div className="space-y-3">
+                          <h3 className="text-xl font-bold text-foreground">{transport.title}</h3>
+                          <p className="text-muted-foreground text-sm leading-relaxed">
                             {transport.description}
                           </p>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-primary" />
-                              Durée
-                            </h4>
-                            <p className="text-muted-foreground">{transport.duration}</p>
+                          
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                              <span className="text-muted-foreground flex items-center gap-1">
+                                <Clock className="w-3 h-3" /> {transport.duration}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground flex items-center gap-1">
+                                <DollarSign className="w-3 h-3" /> {transport.priceRange}
+                              </span>
+                            </div>
                           </div>
+
                           <div className="space-y-2">
-                            <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
-                              <DollarSign className="w-4 h-4 text-primary" />
-                              Tarif
-                            </h4>
-                            <p className="text-muted-foreground">{transport.priceRange}</p>
+                            <ul className="space-y-1 text-sm">
+                              {transport.features.map((feature) => (
+                                <li key={feature} className="text-muted-foreground flex items-center gap-2">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div className="flex gap-2">
+                            <Button 
+                              className="hero-button flex-1"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (transport.reservation) window.open(transport.reservation, '_blank');
+                              }}
+                            >
+                              <ExternalLink className="mr-2 h-4 w-4" />
+                              Réserver
+                            </Button>
+                            {transport.site && (
+                              <Button 
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(transport.site, '_blank');
+                                }}
+                              >
+                                Site web
+                              </Button>
+                            )}
                           </div>
                         </div>
-                        
-                        <div className="space-y-2">
-                          <h4 className="font-semibold text-sm text-foreground">Caractéristiques :</h4>
-                          <ul className="grid grid-cols-2 gap-2">
-                            {transport.features.map((feature) => (
-                              <li key={feature} className="text-sm text-muted-foreground flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                {feature}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        
-                        <Button className="hero-button">
-                          Réserver maintenant
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })}
-            </TabsContent>
-          ))}
-        </Tabs>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="text-center mt-12">
+          <Button 
+            className="hero-button"
+            onClick={() => navigate('/services')}
+          >
+            <ExternalLink className="mr-2 h-4 w-4" />
+            Voir tous les services de transport
+          </Button>
+        </div>
       </div>
     </section>
   );

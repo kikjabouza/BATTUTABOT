@@ -7,17 +7,35 @@ use App\Repository\DestinationRepository;
 use App\Repository\UtilisateurRepository;
 use App\Repository\GroupeCommunauteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/groupe')]
-class GroupeCommunauteController
+class GroupeCommunauteController extends AbstractController
 {
-    #[Route('/', methods: ['GET'])]
-    public function index(GroupeCommunauteRepository $repo): JsonResponse
+    private GroupeCommunauteRepository $groupeRepo;
+    private DestinationRepository $destinationRepo;
+    private UtilisateurRepository $userRepo;
+    private EntityManagerInterface $em;
+
+    public function __construct(
+        GroupeCommunauteRepository $groupeRepo,
+        DestinationRepository $destinationRepo,
+        UtilisateurRepository $userRepo,
+        EntityManagerInterface $em
+    ) {
+        $this->groupeRepo = $groupeRepo;
+        $this->destinationRepo = $destinationRepo;
+        $this->userRepo = $userRepo;
+        $this->em = $em;
+    }
+
+    #[Route('', name: 'api_groupe_index', methods: ['GET'])]
+    public function index(): JsonResponse
     {
-        $groups = $repo->findAll();
+        $groups = $this->groupeRepo->findAll();
 
         $data = array_map(function ($g) {
             return [
@@ -37,7 +55,7 @@ class GroupeCommunauteController
         return new JsonResponse($data);
     }
 
-    #[Route('/{id}', methods: ['GET'])]
+    #[Route('/{id}', name: 'api_groupe_show', methods: ['GET'])]
     public function show(GroupeCommunaute $group): JsonResponse
     {
         return new JsonResponse([
@@ -54,14 +72,15 @@ class GroupeCommunauteController
         ]);
     }
 
-    #[Route('/', methods: ['POST'])]
-    public function create(
-        Request $request,
-        EntityManagerInterface $em,
-        DestinationRepository $destRepo,
-        UtilisateurRepository $userRepo
-    ): JsonResponse {
+    #[Route('', name: 'api_groupe_create', methods: ['POST'])]
+    public function create(Request $request): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
+
+        // Validation des données requises
+        if (!isset($data['nom']) || !isset($data['description']) || !isset($data['typeInteret'])) {
+            return new JsonResponse(['error' => 'Les champs nom, description et typeInteret sont obligatoires'], 400);
+        }
 
         $group = new GroupeCommunaute();
         $group->setNom($data['nom']);
@@ -69,64 +88,76 @@ class GroupeCommunauteController
         $group->setTypeInteret($data['typeInteret']);
         $group->setUrlWhatsapp($data['urlWhatsapp'] ?? null);
         $group->setUrlTelegram($data['urlTelegram'] ?? null);
-        $group->setEstActif($data['estActif']);
+        $group->setEstActif($data['estActif'] ?? true);
         $group->setMembreMax($data['membreMax'] ?? null);
 
         if (isset($data['idDestination'])) {
-            $dest = $destRepo->find($data['idDestination']);
-            $group->setIsDestination($dest);
+            $dest = $this->destinationRepo->find($data['idDestination']);
+            if ($dest) {
+                $group->setIsDestination($dest);
+            }
         }
 
         if (isset($data['idCreateur'])) {
-            $user = $userRepo->find($data['idCreateur']);
-            $group->setIdCreateur($user);
+            $user = $this->userRepo->find($data['idCreateur']);
+            if ($user) {
+                $group->setIdCreateur($user);
+            }
         }
 
-        $em->persist($group);
-        $em->flush();
+        $this->em->persist($group);
+        $this->em->flush();
 
-        return new JsonResponse(['message' => 'Groupe créé', 'id' => $group->getId()], 201);
+        return new JsonResponse([
+            'message' => 'Groupe créé avec succès',
+            'id' => $group->getId(),
+            'data' => [
+                'id' => $group->getId(),
+                'nom' => $group->getNom(),
+                'description' => $group->getDescription(),
+                'typeInteret' => $group->getTypeInteret(),
+            ]
+        ], 201);
     }
 
-    #[Route('/{id}', methods: ['PUT'])]
-    public function update(
-        Request $request,
-        GroupeCommunaute $group,
-        EntityManagerInterface $em,
-        DestinationRepository $destRepo,
-        UtilisateurRepository $userRepo
-    ): JsonResponse {
+    #[Route('/{id}', name: 'api_groupe_update', methods: ['PUT'])]
+    public function update(Request $request, GroupeCommunaute $group): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
 
-        $group->setNom($data['nom']);
-        $group->setDescription($data['description']);
-        $group->setTypeInteret($data['typeInteret']);
-        $group->setUrlWhatsapp($data['urlWhatsapp'] ?? null);
-        $group->setUrlTelegram($data['urlTelegram'] ?? null);
-        $group->setEstActif($data['estActif']);
-        $group->setMembreMax($data['membreMax'] ?? null);
+        $group->setNom($data['nom'] ?? $group->getNom());
+        $group->setDescription($data['description'] ?? $group->getDescription());
+        $group->setTypeInteret($data['typeInteret'] ?? $group->getTypeInteret());
+        $group->setUrlWhatsapp($data['urlWhatsapp'] ?? $group->getUrlWhatsapp());
+        $group->setUrlTelegram($data['urlTelegram'] ?? $group->getUrlTelegram());
+        $group->setEstActif($data['estActif'] ?? $group->isEstActif());
+        $group->setMembreMax($data['membreMax'] ?? $group->getMembreMax());
 
         if (isset($data['idDestination'])) {
-            $group->setIsDestination($destRepo->find($data['idDestination']));
+            $dest = $this->destinationRepo->find($data['idDestination']);
+            if ($dest) {
+                $group->setIsDestination($dest);
+            }
         }
 
         if (isset($data['idCreateur'])) {
-            $group->setIdCreateur($userRepo->find($data['idCreateur']));
+            $user = $this->userRepo->find($data['idCreateur']);
+            if ($user) {
+                $group->setIdCreateur($user);
+            }
         }
 
-        $em->flush();
+        $this->em->flush();
 
-        return new JsonResponse(['message' => 'Groupe mis à jour']);
+        return new JsonResponse(['message' => 'Groupe mis à jour avec succès']);
     }
 
-    #[Route('/{id}', methods: ['DELETE'])]
-    public function delete(
-        GroupeCommunaute $group,
-        EntityManagerInterface $em
-    ): JsonResponse {
-        $em->remove($group);
-        $em->flush();
+    #[Route('/{id}', name: 'api_groupe_delete', methods: ['DELETE'])]
+    public function delete(GroupeCommunaute $group): JsonResponse
+    {
+        $this->em->remove($group);
+        $this->em->flush();
 
-        return new JsonResponse(['message' => 'Groupe supprimé']);
+        return new JsonResponse(['message' => 'Groupe supprimé avec succès']);
     }
 }

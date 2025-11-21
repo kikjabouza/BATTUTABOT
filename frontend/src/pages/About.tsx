@@ -1,7 +1,12 @@
 import { Card } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
+import NavCnx from "@/components/NavCnx";
+import NavArtisan from "@/components/NavArtisan";
+import NavProprietaire from "@/components/NavProprietaire";
+import NavGuide from "@/components/NavGuide";
 import Footer from "@/components/Footer";
 import { Target, Users, Leaf, Award, Sparkles } from "lucide-react";
+import NavigationRouter from "@/components/NavigationRouter";
 
 const About = () => {
   const values = [
@@ -36,7 +41,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-transparent">
-      <Navigation />
+      <NavigationRouter />
       
       <main className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-6xl">

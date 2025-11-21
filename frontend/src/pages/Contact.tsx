@@ -6,11 +6,12 @@ import { Textarea } from "@/components/ui/textarea";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Mail, Phone, MapPin, MessageCircle, Send } from "lucide-react";
+import NavigationRouter from "@/components/NavigationRouter";
 
 const Contact = () => {
   return (
     <div className="min-h-screen bg-transparent">
-      <Navigation />
+      <NavigationRouter />
       
       <main className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-6xl">
@@ -62,18 +63,7 @@ const Contact = () => {
                 </div>
               </Card>
 
-              <Card className="p-6 bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
-                <div className="flex items-center gap-3 mb-3">
-                  <MessageCircle className="w-6 h-6 text-primary" />
-                  <h3 className="font-bold text-lg text-foreground">Chat IA</h3>
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Obtenez des réponses instantanées avec notre assistant IA
-                </p>
-                <Button className="w-full hero-button">
-                  Ouvrir le chat
-                </Button>
-              </Card>
+
             </div>
 
             {/* Contact Form */}

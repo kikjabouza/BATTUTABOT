@@ -29,8 +29,7 @@ const Footer = () => {
                 <li><a href="/" className="footer-link">Accueil</a></li>
                 <li><a href="/culture" className="footer-link">Culture</a></li>
                 <li><a href="/ecodefis" className="footer-link">ÉcoDéfis</a></li>
-                <li><a href="/about" className="footer-link">À propos</a></li>
-                <li><a href="/contact" className="footer-link">Contact</a></li>
+                <li><a href="/services" className="footer-link">Services</a></li>
               </ul>
             </div>
 
@@ -38,10 +37,9 @@ const Footer = () => {
             <div className="space-y-4">
               <h3 className="font-bold text-foreground text-lg">Légal</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="footer-link">Mentions légales</a></li>
-                <li><a href="#" className="footer-link">Confidentialité</a></li>
-                <li><a href="#" className="footer-link">CGU</a></li>
-                <li><a href="#" className="footer-link">Cookies</a></li>
+                <li><a href="/about" className="footer-link">À propos</a></li>
+                <li><a href="/contact" className="footer-link">Contact</a></li>
+                <li><a href="/urgence" className="footer-link">Urgence</a></li>
               </ul>
             </div>
 

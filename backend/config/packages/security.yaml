@@ -1,3 +1,4 @@
+# config/packages/security.yaml
 security:
     password_hashers:
         App\Entity\Utilisateur: "auto"
@@ -25,14 +26,27 @@ security:
             stateless: false
 
     access_control:
-        # ⭐ PUBLIC ACCESS - Routes d'authentification et questions
+        # ⭐ PUBLIC ACCESS - Routes publiques (METTRE EN PREMIER)
         - { path: ^/api/auth/(register|login|logout)$, roles: PUBLIC_ACCESS }
         - { path: ^/api/questionnaire/questions, roles: PUBLIC_ACCESS }
         - { path: ^/api/questionnaire/reponses, roles: PUBLIC_ACCESS }
+        - { path: ^/api/choisir-profil, roles: PUBLIC_ACCESS }
+        - { path: ^/api/artisans, roles: PUBLIC_ACCESS }
+        - { path: ^/api/utilisateurs/, roles: PUBLIC_ACCESS }
+
+        # ⭐ NOUVEAU : Routes publiques pour les services
+        - { path: ^/api/guides, roles: PUBLIC_ACCESS }
+        - { path: ^/api/hebergements, roles: PUBLIC_ACCESS }
+        - { path: ^/api/hebergements/filtrer, roles: PUBLIC_ACCESS }
+        - { path: ^/api/hebergements/types, roles: PUBLIC_ACCESS }
+
+        # ⭐ AJOUTEZ CES LIGNES POUR LA COMMUNAUTÉ
+        - { path: ^/api/profils-touristes, roles: PUBLIC_ACCESS }
+        - { path: ^/api/groupe, roles: PUBLIC_ACCESS }
+        - { path: ^/api/destinations, roles: PUBLIC_ACCESS }
 
         # ⭐ AUTHENTIFICATION REQUISE - Routes protégées
         - { path: ^/api/auth/me, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/choisir-profil, roles: PUBLIC_ACCESS }
 
-        # ⭐ Règle générale pour toutes les autres API
+        # ⭐ Règle générale pour toutes les autres API (DOIT ÊTRE LA DERNIÈRE)
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

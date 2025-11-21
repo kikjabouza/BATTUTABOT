@@ -57,19 +57,32 @@ const ChatBot = () => {
 
   // ✅ RÉPONSES PAR DÉFAUT
   const defaultResponses: { [key: string]: string } = {
-    "bonjour": "Bonjour ! Je suis BATTUTA BOT, votre guide virtuel pour découvrir le Maroc. Comment puis-je vous aider aujourd'hui ? 🇲🇦",
-    "salut": "Salut ! Ravie de vous rencontrer. Je suis BATTUTA BOT, prêt à vous faire découvrir les merveilles du Maroc. Quelle est votre question ?",
-    "hello": "Hello ! Welcome to Morocco! I'm BATTUTA BOT, your virtual guide. How can I assist you today?",
-    "merci": "Je vous en prie ! N'hésitez pas si vous avez d'autres questions sur le Maroc. 😊",
-    "merci beaucoup": "Avec grand plaisir ! N'hésitez pas à me solliciter pour toute information sur le Maroc, sa culture, son histoire ou ses destinations.",
-    "coucou": "Coucou ! 👋 Je suis BATTUTA BOT, enchanté de faire votre connaissance. Que souhaitez-vous savoir sur le Maroc ?",
-    "bjr": "Bjr ! 😊 Je suis BATTUTA BOT, votre assistant pour tout savoir sur le Maroc. Comment puis-je vous aider ?",
-    "bonsoir": "Bonsoir ! 🌙 Je suis BATTUTA BOT, toujours disponible pour vous guider à travers la richesse du Maroc. Quelle est votre question ?",
-    "au revoir": "Au revoir ! À bientôt pour de nouvelles découvertes marocaines. 🇲🇦",
-    "bye": "Bye bye ! Hope to see you soon for more Moroccan adventures!",
-    "comment ça va": "Je vais très bien, merci ! Prêt à vous faire découvrir les trésors du Maroc. Et vous, quelle merveille marocaine souhaitez-vous explorer aujourd'hui ?",
-    "ça va": "Tout va bien de mon côté ! 😊 En tant que BATTUTA BOT, je suis toujours enthousiaste à l'idée de partager la beauté du Maroc. Quelle est votre question ?"
-  };
+  "bonjour": "Bonjour ! Je suis BATTUTA BOT, votre guide virtuel pour découvrir le Maroc. Comment puis-je vous aider aujourd'hui ? 🇲🇦",
+  "salut": "Salut ! Ravie de vous rencontrer. Je suis BATTUTA BOT, prêt à vous faire découvrir les merveilles du Maroc. Quelle est votre question ?",
+  "hello": "Hello ! Welcome to Morocco! I'm BATTUTA BOT, your virtual guide. How can I assist you today?",
+  "hi": "Hi there! 👋 I'm BATTUTA BOT, your guide to exploring Morocco. What would you like to know?",
+  "hey": "Hey ! 😊 I'm BATTUTA BOT, excited to help you discover Morocco. What's on your mind?",
+  "hye": "Hey ! Nice to meet you! I'm BATTUTA BOT, your virtual guide to Morocco. How can I help?",
+  "merci": "Je vous en prie ! N'hésitez pas si vous avez d'autres questions sur le Maroc. 😊",
+  "merci beaucoup": "Avec grand plaisir ! N'hésitez pas à me solliciter pour toute information sur le Maroc, sa culture, son histoire ou ses destinations.",
+  "thanks": "You're welcome! Feel free to ask if you have any other questions about Morocco!",
+  "thank you": "My pleasure! I'm always here to help you discover the wonders of Morocco.",
+  "coucou": "Coucou ! 👋 Je suis BATTUTA BOT, enchanté de faire votre connaissance. Que souhaitez-vous savoir sur le Maroc ?",
+  "bjr": "Bjr ! 😊 Je suis BATTUTA BOT, votre assistant pour tout savoir sur le Maroc. Comment puis-je vous aider ?",
+  "bonsoir": "Bonsoir ! 🌙 Je suis BATTUTA BOT, toujours disponible pour vous guider à travers la richesse du Maroc. Quelle est votre question ?",
+  "au revoir": "Au revoir ! À bientôt pour de nouvelles découvertes marocaines. 🇲🇦",
+  "bye": "Bye bye ! Hope to see you soon for more Moroccan adventures!",
+  "goodbye": "Goodbye! Safe travels and see you next time! 🌟",
+  "comment ça va": "Je vais très bien, merci ! Prêt à vous faire découvrir les trésors du Maroc. Et vous, quelle merveille marocaine souhaitez-vous explorer aujourd'hui ?",
+  "ça va": "Tout va bien de mon côté ! 😊 En tant que BATTUTA BOT, je suis toujours enthousiaste à l'idée de partager la beauté du Maroc. Quelle est votre question ?",
+  "how are you": "I'm doing great, thank you! Ready to help you explore Morocco's wonders. What would you like to know today?",
+  "what's up": "All good here! 😊 As BATTUTA BOT, I'm always excited to talk about Morocco. What's your question?",
+  "qui es-tu": "Je suis BATTUTA BOT, votre assistant IA dédié à la découverte du Maroc ! Je peux vous aider avec des informations sur les destinations, la culture, l'histoire, et bien plus encore. 🇲🇦",
+  "qui êtes-vous": "Je suis BATTUTA BOT, votre guide virtuel pour explorer le Maroc dans toute sa splendeur ! Comment puis-je vous assister aujourd'hui ?",
+  "who are you": "I'm BATTUTA BOT, your AI assistant dedicated to helping you discover Morocco! I can provide information about destinations, culture, history, and much more.",
+  "aide": "Bien sûr ! Je suis là pour vous aider à découvrir le Maroc. Vous pouvez me demander :\n• Des informations sur des villes (Marrakech, Fès, Casablanca...)\n• Des conseils de voyage\n• Des détails sur la culture marocaine\n• Des suggestions d'activités\n• Et bien plus !\n\nQue souhaitez-vous savoir ? 😊",
+  "help": "Of course! I'm here to help you explore Morocco. You can ask me about:\n• City information (Marrakech, Fès, Casablanca...)\n• Travel tips\n• Moroccan culture details\n• Activity suggestions\n• And much more!\n\nWhat would you like to know? 😊"
+};
 
   // Fonction pour détecter les questions simples et répondre directement
   const getDefaultResponse = (question: string): string | null => {

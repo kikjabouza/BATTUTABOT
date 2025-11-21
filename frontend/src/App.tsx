@@ -21,6 +21,10 @@ import Connexion from "./pages/Connexion";
 import ArtisanRegistration from "./pages/ArtisanRegistration";
 import GuideRegistration from "./pages/GuideRegistration";
 import Logout from "./pages/Logout";
+import ArtisanDetails from "./components/ArtisanDetails";
+import Services from "./pages/Services";
+import Events from "./pages/Events";
+
 
 const queryClient = new QueryClient();
 
@@ -48,7 +52,10 @@ const App = () => (
           <Route path="/artisan-registration" element={<ArtisanRegistration />} />
           <Route path="/guide-registration" element={<GuideRegistration />} />
           <Route path="/guide-registration" element={<GuideRegistration />} />
+          <Route path="/artisan/:id" element={<ArtisanDetails />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/events" element={<Events />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
