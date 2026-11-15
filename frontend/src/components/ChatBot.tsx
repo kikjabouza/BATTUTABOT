@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios, { AxiosError } from "axios";
-import { X, MessageCircle, Send, Trash2 } from "lucide-react";
+import { X, MessageCircle, Send, Trash2, Mic, Headphones, Image as ImageIcon } from "lucide-react";
 
 // Import des images
 import nature from "@/assets/nature.jpg";
@@ -11,8 +11,10 @@ import nature2 from "@/assets/nature-adventure-02.jpg";
 import maroc from "@/assets/Maroc.jpeg.1920x0_q85_format-jpg.jpg";
 import nador from "@/assets/nador-maroc.webp";
 import kasbah from "@/assets/kasbah-des-Oudayas-a-Rabat.jpg";
+import NavigationRouter from "@/components/NavigationRouter";
 
-// ✅ Définition des types COMPLETS sans any
+
+// ✅ Types
 interface ApiError {
   message: string;
   details?: unknown;
@@ -38,7 +40,7 @@ interface Message {
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  // ✅ CONSERVER LA DISCUSSION DANS LE LOCALSTORAGE
+  // ✅ Historique
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
       const saved = localStorage.getItem("rag_chat_history");
@@ -50,161 +52,96 @@ const ChatBot = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [currentBackground, setCurrentBackground] = useState(0);
   const [loading, setLoading] = useState(false);
+  
+  // ✅ Audio
+  const [recording, setRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const backgrounds = [nature, zellige, ecodefi, bleu, nature2, maroc, nador, kasbah];
 
-  // ✅ RÉPONSES PAR DÉFAUT
+  // ✅ Réponses par défaut
   const defaultResponses: { [key: string]: string } = {
-  "bonjour": "Bonjour ! Je suis BATTUTA BOT, votre guide virtuel pour découvrir le Maroc. Comment puis-je vous aider aujourd'hui ? 🇲🇦",
-  "salut": "Salut ! Ravie de vous rencontrer. Je suis BATTUTA BOT, prêt à vous faire découvrir les merveilles du Maroc. Quelle est votre question ?",
-  "hello": "Hello ! Welcome to Morocco! I'm BATTUTA BOT, your virtual guide. How can I assist you today?",
-  "hi": "Hi there! 👋 I'm BATTUTA BOT, your guide to exploring Morocco. What would you like to know?",
-  "hey": "Hey ! 😊 I'm BATTUTA BOT, excited to help you discover Morocco. What's on your mind?",
-  "hye": "Hey ! Nice to meet you! I'm BATTUTA BOT, your virtual guide to Morocco. How can I help?",
-  "merci": "Je vous en prie ! N'hésitez pas si vous avez d'autres questions sur le Maroc. 😊",
-  "merci beaucoup": "Avec grand plaisir ! N'hésitez pas à me solliciter pour toute information sur le Maroc, sa culture, son histoire ou ses destinations.",
-  "thanks": "You're welcome! Feel free to ask if you have any other questions about Morocco!",
-  "thank you": "My pleasure! I'm always here to help you discover the wonders of Morocco.",
-  "coucou": "Coucou ! 👋 Je suis BATTUTA BOT, enchanté de faire votre connaissance. Que souhaitez-vous savoir sur le Maroc ?",
-  "bjr": "Bjr ! 😊 Je suis BATTUTA BOT, votre assistant pour tout savoir sur le Maroc. Comment puis-je vous aider ?",
-  "bonsoir": "Bonsoir ! 🌙 Je suis BATTUTA BOT, toujours disponible pour vous guider à travers la richesse du Maroc. Quelle est votre question ?",
-  "au revoir": "Au revoir ! À bientôt pour de nouvelles découvertes marocaines. 🇲🇦",
-  "bye": "Bye bye ! Hope to see you soon for more Moroccan adventures!",
-  "goodbye": "Goodbye! Safe travels and see you next time! 🌟",
-  "comment ça va": "Je vais très bien, merci ! Prêt à vous faire découvrir les trésors du Maroc. Et vous, quelle merveille marocaine souhaitez-vous explorer aujourd'hui ?",
-  "ça va": "Tout va bien de mon côté ! 😊 En tant que BATTUTA BOT, je suis toujours enthousiaste à l'idée de partager la beauté du Maroc. Quelle est votre question ?",
-  "how are you": "I'm doing great, thank you! Ready to help you explore Morocco's wonders. What would you like to know today?",
-  "what's up": "All good here! 😊 As BATTUTA BOT, I'm always excited to talk about Morocco. What's your question?",
-  "qui es-tu": "Je suis BATTUTA BOT, votre assistant IA dédié à la découverte du Maroc ! Je peux vous aider avec des informations sur les destinations, la culture, l'histoire, et bien plus encore. 🇲🇦",
-  "qui êtes-vous": "Je suis BATTUTA BOT, votre guide virtuel pour explorer le Maroc dans toute sa splendeur ! Comment puis-je vous assister aujourd'hui ?",
-  "who are you": "I'm BATTUTA BOT, your AI assistant dedicated to helping you discover Morocco! I can provide information about destinations, culture, history, and much more.",
-  "aide": "Bien sûr ! Je suis là pour vous aider à découvrir le Maroc. Vous pouvez me demander :\n• Des informations sur des villes (Marrakech, Fès, Casablanca...)\n• Des conseils de voyage\n• Des détails sur la culture marocaine\n• Des suggestions d'activités\n• Et bien plus !\n\nQue souhaitez-vous savoir ? 😊",
-  "help": "Of course! I'm here to help you explore Morocco. You can ask me about:\n• City information (Marrakech, Fès, Casablanca...)\n• Travel tips\n• Moroccan culture details\n• Activity suggestions\n• And much more!\n\nWhat would you like to know? 😊"
-};
+    "bonjour": "Bonjour ! Je suis BATTUTA BOT, votre guide virtuel pour découvrir le Maroc. Comment puis-je vous aider aujourd'hui ? 🇲🇦",
+    "salut": "Salut ! Ravie de vous rencontrer. Je suis BATTUTA BOT. Quelle est votre question ?",
+    "hello": "Hello ! Welcome to Morocco! I'm BATTUTA BOT. How can I assist you today?",
+    "merci": "Je vous en prie ! N'hésitez pas si vous avez d'autres questions sur le Maroc. 😊",
+    "au revoir": "Au revoir ! À bientôt pour de nouvelles découvertes marocaines. 🇲🇦",
+    "ça va": "Tout va bien de mon côté ! 😊 Prêt à explorer le Maroc avec vous."
+  };
 
-  // Fonction pour détecter les questions simples et répondre directement
   const getDefaultResponse = (question: string): string | null => {
     const cleanQuestion = question.toLowerCase().trim();
-    
-    // Vérifier les correspondances exactes
     for (const [key, response] of Object.entries(defaultResponses)) {
-      if (cleanQuestion === key.toLowerCase()) {
-        return response;
-      }
+      if (cleanQuestion.includes(key)) return response;
     }
-    
-    // Vérifier les correspondances partielles
-    if (cleanQuestion.includes("bonjour") || cleanQuestion.includes("salut") || cleanQuestion.includes("coucou")) {
-      return defaultResponses["bonjour"];
-    }
-    if (cleanQuestion.includes("merci")) {
-      return defaultResponses["merci"];
-    }
-    if (cleanQuestion.includes("au revoir") || cleanQuestion.includes("bye")) {
-      return defaultResponses["au revoir"];
-    }
-    if (cleanQuestion.includes("comment ça va") || cleanQuestion.includes("ça va")) {
-      return defaultResponses["comment ça va"];
-    }
-    
     return null;
   };
 
-  // ✅ FONCTION POUR RESET LA CONVERSATION
   const resetConversation = () => {
     setMessages([]);
     localStorage.removeItem("rag_chat_history");
   };
 
-  // Scroll automatique vers le bas quand les messages changent
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  useEffect(() => { scrollToBottom(); }, [messages]);
 
-  // Changer le background automatiquement
   useEffect(() => {
     if (!isOpen) return;
-    
     const interval = setInterval(() => {
       setCurrentBackground((prev) => (prev + 1) % backgrounds.length);
     }, 4000);
-
     return () => clearInterval(interval);
   }, [isOpen, backgrounds.length]);
 
-  // ✅ PERSISTER LES MESSAGES DANS LE LOCALSTORAGE (sauf les messages de loading)
   useEffect(() => {
     const messagesToSave = messages.filter(msg => msg.role !== "loading");
-    try {
-      localStorage.setItem("rag_chat_history", JSON.stringify(messagesToSave));
-    } catch (e) {
-      // ignore
-    }
+    try { localStorage.setItem("rag_chat_history", JSON.stringify(messagesToSave)); } catch (e) {}
   }, [messages]);
 
   const changeBackground = () => {
     setCurrentBackground((prev) => (prev + 1) % backgrounds.length);
   };
 
-  const handleSendMessage = async () => {
-    const question = inputMessage.trim();
-    if (!question || loading) return;
+  // ==========================================
+  // 🎤 LOGIQUE AUDIO
+  // ==========================================
 
+  const handleSendAudio = async (file: File) => {
+    if (!file || loading) return;
     setLoading(true);
 
     const userMsg: Message = {
       id: Date.now(),
       role: "user",
-      text: question,
+      text: "🎤 Message vocal envoyé",
       timestamp: new Date().toISOString(),
     };
     
-    // Ajouter le message de l'utilisateur
-    setMessages(prev => [...prev, userMsg]);
-    setInputMessage("");
-
-    // ✅ VÉRIFIER SI C'EST UNE QUESTION SIMPLE
-    const defaultResponse = getDefaultResponse(question);
-    
-    if (defaultResponse) {
-      // Réponse immédiate sans appel API
-      setTimeout(() => {
-        const assistantMsg: Message = {
-          id: Date.now() + 1,
-          role: "assistant",
-          text: defaultResponse,
-          timestamp: new Date().toISOString(),
-        };
-        setMessages(prev => [...prev, assistantMsg]);
-        setLoading(false);
-      }, 500); // Petit délai pour un effet naturel
-      return;
-    }
-
-    // Ajouter le message de chargement (pour les vraies questions)
     const loadingMsg: Message = {
-      id: Date.now() + 0.5, // ID temporaire pour le loading
+      id: Date.now() + 0.5,
       role: "loading",
-      text: "BATTUTA BOT réfléchit...",
+      text: "Analyse audio...",
       timestamp: new Date().toISOString(),
     };
     
-    setMessages(prev => [...prev, loadingMsg]);
+    setMessages(prev => [...prev, userMsg, loadingMsg]);
 
     try {
       const formData = new FormData();
       formData.append("user_id", "user001");
-      formData.append("question", question);
+      formData.append("audio_file", file);
 
-      const res = await axios.post<ApiResponse>("https://jilali21-batotabot.hf.space/rag", formData);
+      const res = await axios.post<ApiResponse>("https://jilali21-batotabot.hf.space/audio", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
 
-      // Supprimer le message de loading et ajouter la réponse
       setMessages(prev => {
         const withoutLoading = prev.filter(msg => msg.id !== loadingMsg.id);
         const assistantMsg: Message = {
@@ -218,27 +155,104 @@ const ChatBot = () => {
         };
         return [...withoutLoading, assistantMsg];
       });
-      
+
     } catch (error) {
-      console.error("Erreur API:", error);
-      
-      // Supprimer le message de loading et ajouter l'erreur
       setMessages(prev => {
         const withoutLoading = prev.filter(msg => msg.id !== loadingMsg.id);
         const axiosError = error as AxiosError;
-        const errorMsg: ApiError = {
-          message: axiosError.message,
-          details: axiosError.response?.data
-        };
-
-        const assistantMsg: Message = {
-          id: Date.now() + 1,
-          role: "assistant",
-          text: null,
-          error: errorMsg,
+        return [...withoutLoading, {
+          id: Date.now() + 1, role: "assistant", text: null,
+          error: { message: axiosError.message, details: axiosError.response?.data },
           timestamp: new Date().toISOString(),
+        }];
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleRecording = async () => {
+    if (recording) {
+      mediaRecorderRef.current?.stop();
+      setRecording(false);
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        audioChunksRef.current = [];
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+          const file = new File([audioBlob], `recording_${Date.now()}.webm`, { type: "audio/webm" });
+          await handleSendAudio(file);
+          stream.getTracks().forEach(track => track.stop());
         };
-        return [...withoutLoading, assistantMsg];
+        mediaRecorder.start();
+        setRecording(true);
+      } catch (err) { alert("Impossible d'accéder au microphone."); }
+    }
+  };
+
+  // ==========================================
+  // 📨 LOGIQUE TEXTE
+  // ==========================================
+
+  const handleSendMessage = async () => {
+    const question = inputMessage.trim();
+    if (!question || loading) return;
+
+    setLoading(true);
+
+    const userMsg: Message = {
+      id: Date.now(), role: "user", text: question, timestamp: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, userMsg]);
+    setInputMessage("");
+
+    const defaultResponse = getDefaultResponse(question);
+    if (defaultResponse) {
+      setTimeout(() => {
+        setMessages(prev => [...prev, {
+          id: Date.now() + 1, role: "assistant", text: defaultResponse, timestamp: new Date().toISOString(),
+        }]);
+        setLoading(false);
+      }, 500);
+      return;
+    }
+
+    const loadingMsg: Message = {
+      id: Date.now() + 0.5, role: "loading", text: "BATTUTA BOT réfléchit...", timestamp: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, loadingMsg]);
+
+    try {
+      const formData = new FormData();
+      formData.append("user_id", "user001");
+      formData.append("question", question);
+
+      const res = await axios.post<ApiResponse>("https://jilali21-batotabot.hf.space/rag", formData);
+
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => msg.id !== loadingMsg.id);
+        return [...withoutLoading, {
+          id: Date.now() + 1, role: "assistant",
+          text: res.data.answer || null,
+          images: res.data.images || [],
+          audio_url: res.data.audio_url || null,
+          raw: res.data, timestamp: new Date().toISOString(),
+        }];
+      });
+      
+    } catch (error) {
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => msg.id !== loadingMsg.id);
+        const axiosError = error as AxiosError;
+        return [...withoutLoading, {
+          id: Date.now() + 1, role: "assistant", text: null,
+          error: { message: axiosError.message, details: axiosError.response?.data },
+          timestamp: new Date().toISOString(),
+        }];
       });
     } finally {
       setLoading(false);
@@ -276,46 +290,25 @@ const ChatBot = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {/* Bouton pour changer le background */}
-              <button
-                onClick={changeBackground}
-                className="p-1 hover:bg-white/20 rounded-full transition-colors duration-200"
-                title="Changer le fond"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                  <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
-                  <polyline points="7.5 19.79 7.5 14.6 3 12"/>
-                  <polyline points="21 12 16.5 14.6 16.5 19.79"/>
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                  <line x1="12" y1="22.08" x2="12" y2="12"/>
-                </svg>
+              
+              {/* BOUTON IA VOYAGE (Réintégré) */}
+              
+
+              <button onClick={changeBackground} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+                <ImageIcon size={18} />
               </button>
-              
-              
-              
-              {/* Bouton pour reset la conversation (affiché seulement s'il y a des messages) */}
               {messages.length > 0 && (
-                <button
-                  onClick={resetConversation}
-                  className="p-1 hover:bg-white/20 rounded-full transition-colors duration-200"
-                  title="Nouvelle conversation"
-                >
-                  <Trash2 size={16} />
+                <button onClick={resetConversation} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+                  <Trash2 size={18} />
                 </button>
               )}
-              
-              {/* Bouton fermer */}
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-white/20 rounded-full transition-colors duration-200"
-              >
+              <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-white/20 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
           </div>
 
-          {/* Messages avec scroll automatique et masqué */}
+          {/* Messages Zone */}
           <div 
             ref={chatRef}
             className="flex-1 p-4 overflow-y-auto bg-cover bg-center transition-all duration-1000 ease-in-out relative scrollbar-hide"
@@ -326,86 +319,96 @@ const ChatBot = () => {
             }}
           >
             <style>{`
-              .scrollbar-hide {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-              }
-              .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-              }
+              .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+              .scrollbar-hide::-webkit-scrollbar { display: none; }
             `}</style>
             
             <div className="absolute inset-0 bg-black/10 pointer-events-none rounded-b-2xl" />
             
             <div className="relative z-10 h-full">
               {messages.length === 0 ? (
-                <div className="text-center text-white mt-8 drop-shadow-lg">
+                <div className="text-center text-white mt-8 drop-shadow-lg animate-in fade-in duration-500">
                   <MessageCircle size={48} className="mx-auto mb-2 opacity-80" />
                   <p className="font-medium">Bonjour ! Je suis BATTUTA BOT.</p>
-                  <p className="text-sm opacity-90">Comment puis-je vous aider ?</p>
-                  <p className="text-xs opacity-80 mt-2">Essayez notre <span className="font-semibold">Assistant IA de Voyage</span> pour planifier votre séjour !</p>
+                  <p className="text-sm opacity-90">Posez-moi une question sur le Maroc !</p>
+                  <p className="text-xs opacity-80 mt-2">Cliquez sur <span className="font-semibold">IA Voyage</span> pour planifier votre séjour.</p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {messages.map((message, index) => (
-                    <div
-                      key={message.id || index}
-                      className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                    >
+                <div className="space-y-4">
+                  {messages.map((message, index) => {
+                    const isUser = message.role === "user";
+                    const isLoading = message.role === "loading";
+
+                    return (
                       <div
-                        className={`max-w-[85%] rounded-2xl p-3 transition-all duration-200 backdrop-blur-sm ${
-                          message.role === "user"
-                            ? "bg-blue-600/90 text-white rounded-br-none border border-blue-400/30"
-                            : message.role === "loading" 
-                            ? "bg-transparent text-gray-300/90 rounded-bl-none border border-gray-400/30 italic"
-                            : "bg-gray-200/80 text-gray-800 rounded-bl-none border border-gray-300/30"
-                        }`}
+                        key={message.id || index}
+                        className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
                       >
-                        {message.role === "loading" ? (
-                          <div className="flex items-center gap-2">
-                            <div className="flex space-x-1">
-                              <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                              <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                              <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div
+                          className={`flex flex-col max-w-[85%] rounded-2xl p-3 shadow-sm backdrop-blur-sm transition-all duration-200 ${
+                            isUser
+                              ? "bg-blue-600/90 text-white rounded-br-none border border-blue-400/30"
+                              : isLoading
+                              ? "bg-white/50 text-gray-600 rounded-bl-none italic border border-white/40"
+                              : "bg-gray-100/95 text-gray-800 rounded-bl-none border border-gray-200"
+                          }`}
+                        >
+                          {/* 1. Le Texte */}
+                          {message.text && (
+                            <div className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">
+                              {isLoading && <span className="inline-block w-2 h-2 bg-current rounded-full animate-bounce mr-1"/>}
+                              {message.text}
                             </div>
-                            <span>{message.text}</span>
-                          </div>
-                        ) : (
-                          <>
-                            {message.text && <div>{message.text}</div>}
-                            {message.error && (
-                              <div className="text-red-600 text-sm">
-                                Erreur: {message.error.message}
-                              </div>
-                            )}
-                            {message.images && message.images.length > 0 && (
-                              <div className="mt-2 grid grid-cols-2 gap-2">
-                                {message.images.map((url, i) => (
+                          )}
+
+                          {/* 2. Les Erreurs */}
+                          {message.error && (
+                            <div className="text-red-600 text-xs mt-1 bg-red-50 p-1.5 rounded">
+                              ⚠️ {message.error.message}
+                            </div>
+                          )}
+
+                          {/* 3. La Galerie d'Images (Grille) */}
+                          {message.images && message.images.length > 0 && (
+                            <div className={`grid gap-1 mt-2 overflow-hidden rounded-xl ${
+                              message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+                            }`}>
+                              {message.images.map((url, i) => (
+                                <div key={i} className="relative aspect-square cursor-pointer group overflow-hidden bg-gray-200" onClick={() => window.open(url, "_blank")}>
                                   <img 
-                                    key={i} 
                                     src={url} 
-                                    alt={`image-${i}`} 
-                                    className="w-full rounded cursor-pointer" 
-                                    onClick={() => window.open(url, "_blank")} 
+                                    alt="illustration" 
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
                                   />
-                                ))}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* 4. Le Lecteur Audio (Note Vocale) */}
+                          {message.audio_url && (
+                            <div className={`mt-2 flex items-center gap-2 p-2 rounded-xl ${isUser ? 'bg-blue-700/50' : 'bg-white border border-gray-200'}`}>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isUser ? 'bg-white/20' : 'bg-green-100 text-green-600'}`}>
+                                <Headphones size={16} />
                               </div>
-                            )}
-                            {message.audio_url && (
-                              <div className="mt-2">
-                                <audio 
-                                  controls 
-                                  src={message.audio_url.startsWith("http") ? message.audio_url : `https://jilali21-batotabot.hf.space${message.audio_url}`} 
-                                  className="w-full" 
-                                />
-                              </div>
-                            )}
-                          </>
-                        )}
+                              <audio 
+                                controls 
+                                src={message.audio_url.startsWith("http") ? message.audio_url : `https://jilali21-batotabot.hf.space${message.audio_url}`} 
+                                className="h-8 w-full min-w-[180px]" 
+                              />
+                            </div>
+                          )}
+                          
+                          {/* Timestamp */}
+                          {!isLoading && (
+                            <span className={`text-[10px] mt-1 self-end ${isUser ? 'text-blue-100' : 'text-gray-400'}`}>
+                              {new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  {/* Element invisible pour le scroll automatique */}
+                    );
+                  })}
                   <div ref={messagesEndRef} />
                 </div>
               )}
@@ -414,23 +417,39 @@ const ChatBot = () => {
 
           {/* Input */}
           <div className="p-4 border-t bg-white rounded-b-2xl">
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-end">
+              <button
+                onClick={toggleRecording}
+                className={`rounded-full p-3 transition-all duration-200 flex-shrink-0 ${
+                  recording 
+                  ? "bg-red-600 text-white animate-pulse shadow-lg" 
+                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+                disabled={loading}
+              >
+                <Mic size={20} />
+              </button>
+
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                placeholder={loading ? "Chargement..." : "Tapez votre message..."}
-                disabled={loading}
-                className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-60"
+                placeholder={recording ? "Enregistrement..." : "Votre message..."}
+                disabled={loading || recording}
+                className="flex-1 border border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-sm"
               />
+
               <button
                 onClick={handleSendMessage}
-                className="bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 transition-colors duration-200 hover:scale-105 disabled:opacity-60"
-                disabled={loading}
-                title={loading ? "Chargement..." : "Envoyer"}
+                className={`rounded-full p-3 transition-all duration-200 flex-shrink-0 ${
+                    inputMessage.trim() 
+                    ? "bg-green-600 text-white hover:bg-green-700 shadow-md hover:scale-105" 
+                    : "bg-gray-200 text-gray-400"
+                }`}
+                disabled={loading || (!inputMessage.trim() && !recording)}
               >
-                <Send size={18} />
+                <Send size={20} className={inputMessage.trim() ? "ml-0.5" : ""} />
               </button>
             </div>
           </div>
